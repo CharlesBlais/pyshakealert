@@ -1,0 +1,20 @@
+# Log directory
+log/
+
+# Ignore python compiled
+*pyc
+
+# Ignore setup.py build information
+*egg-info
+/dist/
+/build/
+
+# Ignore pytest caching
+.pytest_cache
+__pycache__
+
+# Ignore mypy caching
+.mypy_cache
+
+# Ignore visual studio code
+.vscode
