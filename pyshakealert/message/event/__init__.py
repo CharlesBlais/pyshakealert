@@ -14,7 +14,8 @@ def from_string(content: str) -> Event:
     '''
     xmldoc = json.loads(json.dumps(xmltodict.parse(content)))
     if 'event_message' not in xmldoc:
-        raise ValueError("Content of XML should be a event_message, received %s" % content)
+        raise ValueError(
+            f'Content of XML should be a event_message, received {content}')
     return Event(**xmldoc['event_message'])
 
 

@@ -17,14 +17,14 @@ from obspy.clients.fdsn.client import Client
 import pyshakealert.channels.file
 
 # Constants
-FDSNWS = "http://fdsn.seismo.nrcan.gc.ca"
+FDSNWS = 'http://fdsn.seismo.nrcan.gc.ca'
 
 
 @pytest.fixture
 def inventory():
-    '''
+    """
     Dummy inventory content using exsiting FDSNWS
-    '''
+    """
     client = Client(FDSNWS)
     return client.get_stations(
         network='CN',
@@ -35,9 +35,9 @@ def inventory():
 
 
 def test_chanfile_create(inventory):
-    '''
+    """
     Test creation of chanfile
-    '''
+    """
     # Create StringIO that will hold our response
     resource = io.StringIO()
     # Generate the file in memory
@@ -46,4 +46,4 @@ def test_chanfile_create(inventory):
     resource.seek(0)
     # get the content
     content = resource.getvalue()
-    assert "# 3 rows returned" in content
+    assert '# 3 rows returned' in content

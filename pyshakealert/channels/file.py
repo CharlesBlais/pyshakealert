@@ -1,9 +1,10 @@
-'''
+"""
 Channel file library
 ====================
 
 Library for creating channel file using FDSN-WS response.  The channel file
-supports any seismic channels.  The mandatory information present in the response must be:
+supports any seismic channels.  The mandatory information present in the
+response must be:
 
     - network code
     - station code
@@ -23,7 +24,7 @@ supports any seismic channels.  The mandatory information present in the respons
 It is currently unknown if the channel description is a mandatory field.
 
 ..  codeauthor:: Charles Blais
-'''
+"""
 import datetime
 from typing import Union, Optional, TextIO
 from pkg_resources import resource_filename
@@ -35,7 +36,7 @@ from obspy.core.inventory.inventory import Inventory
 # Constants
 J2_ENV = Environment(
     loader=FileSystemLoader(
-        resource_filename("pyshakealert", "files/templates")
+        resource_filename('pyshakealert', 'files/templates')
     ),
     trim_blocks=True
 )
@@ -47,16 +48,16 @@ def write(
     inventory: Inventory,
     user: Optional[str] = None
 ) -> None:
-    '''
-    Using a obspy inventory object (with response level information) we use the Jinja2
-    template the create the file.
+    """
+    Using a obspy inventory object (with response level information) we use
+    the Jinja2 template the create the file.
 
     :type filename: str or resource
     :param filename: file to write to
     :type inventory: :class:`obspy.core.inventory.Inventory`
     :param inventory: list of channel
     :param str user: user name signature (optional)
-    '''
+    """
     resource = open(filename, 'w') if isinstance(filename, str) else filename
 
     # Recalculate overall sensitivity of all channnels

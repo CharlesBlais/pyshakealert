@@ -1,6 +1,6 @@
-'''
+"""
 ..  codeauthor:: Charles Blais
-'''
+"""
 import datetime
 import io
 
@@ -8,20 +8,20 @@ import pyshakealert.message.event as event
 
 
 def test_event():
-    '''
+    """
     Test reading event read from file
-    '''
+    """
     message = event.from_file('tests/message/examples/Point_Source/1868_Hayward_M6.8_contour.xml')
     assert message.category == 'test'
-    assert message.origin_system == "dm"
-    assert message.message_type == "new"
+    assert message.origin_system == 'dm'
+    assert message.message_type == 'new'
     assert message.version == 0
     assert message.timestamp.replace(tzinfo=None) == datetime.datetime(1868,10,21,15,53,4,0)
-    assert message.core.id == "1868_Hayward_M6.8"
+    assert message.core.id == '1868_Hayward_M6.8'
     assert message.core.magnitude.value == 6.8
-    assert message.core.magnitude.units == "Mw"
+    assert message.core.magnitude.units == 'Mw'
     assert message.core.magnitude_uncertainty.value == 1.0
-    assert message.core.magnitude_uncertainty.units == "Mw"
+    assert message.core.magnitude_uncertainty.units == 'Mw'
     assert message.core.latitude.value == 37.7
     assert message.core.latitude_uncertainty.value == 0.5
     assert message.core.longitude.value == -122.1
@@ -32,11 +32,11 @@ def test_event():
     assert message.core.origintime_uncertainty.value == 20.0
     assert message.core.likelihood == 1.0
     assert message.core.stations == 0
-    assert message.contributors[0].algorithm_name == "dm"
-    assert message.contributors[0].algorithm_version == "-"
-    assert message.contributors[0].algorithm_instance == "-"
-    assert message.contributors[0].category == "test"
-    assert message.contributors[0].event_id == "1868_Hayward_M6.8"
+    assert message.contributors[0].algorithm_name == 'dm'
+    assert message.contributors[0].algorithm_version == '-'
+    assert message.contributors[0].algorithm_instance == '-'
+    assert message.contributors[0].category == 'test'
+    assert message.contributors[0].event_id == '1868_Hayward_M6.8'
     assert message.contributors[0].version == 0
 
 
@@ -74,13 +74,13 @@ def test_event_map_geopandas():
 
 
 def test_event_contour_write():
-    '''
+    """
     Test reading event read from file
-    '''
+    """
     resource = io.StringIO()
     message = event.from_file('tests/message/examples/Point_Source/1868_Hayward_M6.8_contour.xml')
     # Change the value of our latitude to test if altering and writing works
     message.core.latitude.value = 10.0
     message.write(resource, format='xml')
     resource.seek(0)
-    assert "<lat units=\"deg\">10.0</lat>" in resource.getvalue()
+    assert '<lat units="deg">10.0</lat>' in resource.getvalue()

@@ -1,9 +1,9 @@
-'''
+"""
 Command-line utilities
 ======================
 
 ..  codeauthor:: Charles Blais
-'''
+"""
 import argparse
 import sys
 import logging
@@ -22,12 +22,12 @@ USER = getpass.getuser()
 
 
 def fdsnws2chanfile():
-    '''
+    """
     Call the FDSN-WS, extract the channel information
     and creates the relevant chanfile
-    '''
+    """
     parser = argparse.ArgumentParser(
-        description='Query FDSN-WS to generate channel file used by ShakeAlert')
+        description='Query FDSN-WS to generate channel file')
     parser.add_argument(
         '--fdsnws',
         default=DEFAULT_FDSNWS,
@@ -62,16 +62,15 @@ def fdsnws2chanfile():
     logging.basicConfig(
         format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s %(funcName)s:\
             %(message)s',
-        datefmt="%Y-%m-%d %H:%M:%S",
+        datefmt='%Y-%m-%d %H:%M:%S',
         level=logging.INFO if args.verbose else logging.WARNING)
 
-    logging.info("Connection to FDSN-WS: %s", args.fdsnws)
+    logging.info(f'Connection to FDSN-WS: {args.fdsnws}')
     client = Client(args.fdsnws)
 
     logging.info(
-        "Getting inventory for %s.%s.%s.%s",
-        args.network, args.station,
-        args.location, args.channel)
+        f'Getting inventory for {args.network}.{args.station}\
+.{args.location}.{args.channel}')
 
     inventory = client.get_stations(
         network=args.network,
@@ -80,6 +79,6 @@ def fdsnws2chanfile():
         channel=args.channel, level='response',
         starttime=UTCDateTime())
 
-    logging.info("Inventory found: %s", str(inventory))
-    logging.info("Writing to %s", args.output)
+    logging.info(f'Inventory found: {inventory}')
+    logging.info(f'Writing to {args.output}')
     pyshakealert.channels.file.write(args.output, inventory, user=USER)

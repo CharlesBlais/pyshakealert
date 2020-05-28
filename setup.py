@@ -41,7 +41,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.3',  # Required
+    version='0.0.4',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -141,7 +141,7 @@ setup(
         'python-dateutil',
         'geopandas',
         'shapely',
-        'pysftp',
+        'paramiko',
         'obspy',
     ],  # Optional
 
@@ -191,7 +191,8 @@ setup(
     entry_points={  # Optional
         'console_scripts': [
             'shake_fdsnws2chanfile=pyshakealert.bin.fdsnws2chanfile:fdsnws2chanfile',
-            'shake_file2shakealert=pyshakealert.bin.file2shakealert:file2shakealert'
+            'shake_file2shakealert=pyshakealert.bin.file2shakealert:file2shakealert',
+            'shake_fdsnws2tank=pyshakealert.bin.fdsnws2tank:fdsnws2tank',
         ],
     },
 

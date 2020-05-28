@@ -1,6 +1,6 @@
-'''
+"""
 ..  codeauthor:: Charles Blais
-'''
+"""
 import signal
 import time
 import datetime
@@ -31,7 +31,7 @@ def client_sa():
 
 @pytest.fixture
 def fake_event():
-    return """<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+    return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <event_message category="live" message_type="new" orig_sys="dm" version="0" timestamp="{timestamp}Z">
   <core_info id="4557299">
     <mag units="Mw">6.4000</mag>
@@ -51,47 +51,48 @@ def fake_event():
     <contributor alg_name="dm" alg_version="-" category="live" event_id="4557299" version="0"/>
   </contributors>
 </event_message>
-""".format(timestamp=datetime.datetime.now().isoformat()[:19])
+'''.format(timestamp=datetime.datetime.now().isoformat()[:19])
 
 
 def test_listen(client_dm):
-    '''
+    """
     Test connection to client on heartbeat topic
-    '''
+    """
     # set signal handlers for stoping listener
     client_dm.listen('eew.sys.ha.data')
     time.sleep(10)
 
 
 def test_listen_hb(client_sa):
-    '''
+    """
     Test connection to client on heartbeat topic
-    '''
+    """
     # set signal handlers for stoping listener
     client_sa.listen('eew.alg.finder.hb')
     time.sleep(10)
 
 
+
 def test_send_hb(client_sa):
-    '''
+    """
     Test sending HB
-    '''
-    fake_hb = """<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+    """
+    fake_hb = '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <hb originator="finder.eew-bk-int1" sender="finder.eew-bk-int1" timestamp="{timestamp}"/>
-""".format(
-        timestamp=str(datetime.datetime.now().strftime("%a %b %d %H:%M:%S %Y")))
+'''.format(
+        timestamp=str(datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y')))
 
     client_sa.send(
-        "eew.alg.finder.hb",
+        'eew.alg.finder.hb',
         fake_hb.encode('utf-8'),
         expires=datetime.timedelta(seconds=10),
         message_type='hb_finder.eew-bk-int1')
 
 
 def test_send(client_dm, fake_event):
-    '''
+    """
     Test connection to client
-    '''
+    """
     client_dm.send(
         'eew.sys.dm.data',
         fake_event.encode('utf-8'),

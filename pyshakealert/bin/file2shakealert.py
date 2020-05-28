@@ -1,9 +1,9 @@
-'''
+"""
 Command-line utilities
 ======================
 
 ..  codeauthor:: Charles Blais
-'''
+"""
 import argparse
 import sys
 import logging
@@ -19,12 +19,12 @@ SHAKEALERT_STOMP_PORTS = [61613, 62613, 63613]
 
 
 def file2shakealert():
-    '''
+    """
     Send messages on any topic on the ShakeAlert system
     and output the result to stdout
-    '''
+    """
     parser = argparse.ArgumentParser(
-        description='ShakeAlert message listener (simplifies stomp utility)')
+        description='ShakeAlert message sender (simplified stomp utility)')
     parser.add_argument(
         '-H', '--host',
         default=DEFAULT_SHAKEALERT_HOST,
@@ -58,7 +58,7 @@ def file2shakealert():
     parser.add_argument(
         '-m', '--message-type',
         default='new',
-        help='Message type (unsure if this is required for all message) (default: new)')
+        help='Message type (default: new)')
     parser.add_argument(
         '-v', '--verbose',
         action='store_true',
@@ -69,15 +69,15 @@ def file2shakealert():
     logging.basicConfig(
         format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s %(funcName)s:\
             %(message)s',
-        datefmt="%Y-%m-%d %H:%M:%S",
+        datefmt='%Y-%m-%d %H:%M:%S',
         level=logging.DEBUG if args.verbose else logging.WARNING)
 
     # Read content to send
     if args.file is None:
-        logging.info("Reading message from stdin")
+        logging.info('Reading message from stdin')
         body = sys.stdin.read()
     else:
-        logging.info("Reading message from %s" % args.file)
+        logging.info(f'Reading message from {args.file}')
         body = open(args.file, 'r').read()
 
     # set signal handlers for stoping listener
