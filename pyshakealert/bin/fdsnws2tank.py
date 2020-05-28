@@ -55,7 +55,7 @@ extract miniseed information.')
         help=f'Pad after in seconds (default: {DEFAULT_PAD_AFTER})')
     parser.add_argument(
         '--output',
-        default=sys.stdout,
+        default=sys.stdout.buffer,
         help='Output file (default: stdout)')
     parser.add_argument(
         '-v', '--verbose',
