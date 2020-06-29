@@ -63,6 +63,11 @@ extract miniseed information.')
         help=f'Split traces in streams by seconds \
 (default: {DEFAULT_BUFFER_SIZE})')
     parser.add_argument(
+        '--radius',
+        default=None,
+        help='Radius in degrees to take from the event location.  \
+If not set, the stations with picks will be selected.')
+    parser.add_argument(
         '--output',
         default=sys.stdout.buffer,
         help='Output file (default: stdout)')
@@ -87,11 +92,13 @@ extract miniseed information.')
     if args.quakeml is not None:
         tankcontent = tankgen.from_event(
             read_events(args.quakeml),
+            radius=args.radius,
             pad_before=args.pad_before,
             pad_after=args.pad_after)
     else:
         tankcontent = tankgen.from_eventid(
             args.eventid,
+            radius=args.radius,
             pad_before=args.pad_before,
             pad_after=args.pad_after,
             buffer_size=args.buffer_size)

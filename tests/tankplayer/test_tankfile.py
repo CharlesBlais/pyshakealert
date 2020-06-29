@@ -13,5 +13,5 @@ def test_tankfile_from_eventid():
     Tankfile from eventid
     """
     tankgen = tankfile.TankGenerator(FDSNWS)
-    tankgen.from_eventid('gsc2020lrjt')
+    tankgen.from_eventid('gsc2020lrjt', radius=1)
     assert False

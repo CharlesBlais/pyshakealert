@@ -5,6 +5,7 @@ import os
 import subprocess
 import tempfile
 import logging
+from typing import Optional
 
 # Third-party applications
 from obspy import Stream
@@ -111,6 +112,7 @@ class TankGenerator(object):
     def from_event(
         self,
         event: Event,
+        radius: Optional[float] = None,
         pad_before: float = DEFAULT_PAD_BEFORE,
         pad_after: float = DEFAULT_PAD_AFTER,
         buffer_size: float = DEFAULT_BUFFER_SIZE,
@@ -125,21 +127,43 @@ class TankGenerator(object):
         starttime = min(times) - pad_before
         endtime = max(times) + pad_after
 
-        stream = Stream()
+        if radius is None:
+            stations = [{
+                'network': pick.waveform_id.network_code,
+                'station': pick.waveform_id.station_code,
+                'location': pick.waveform_id.location_code,
+                'channel': pick.waveform_id.channel_code,
+            } for pick in event.picks]
+        else:
+            inv = self.client.get_stations(
+                starttime=starttime,
+                endtime=endtime,
+                latitude=event.origins[0].latitude,
+                longitude=event.origins[0].longitude,
+                maxradius=radius,
+                level='channel',
+            )
+            stations = [{
+                'network': network.code,
+                'station': station.code,
+                'location': channel.location_code,
+                'channel': channel.code,
+            } for network in inv for station in network for channel in station]
+
         # Get the data from the pick information
-        for pick in event.picks:
-            logging.info(f'Download data for {pick.waveform_id.network_code}.\
-{pick.waveform_id.station_code}.{pick.waveform_id.location_code}.\
-{pick.waveform_id.channel_code} \
-from {starttime} to {endtime}')
-            try:
-                stream += self.client.get_waveforms(
-                    network=pick.waveform_id.network_code,
-                    station=pick.waveform_id.station_code,
-                    location=pick.waveform_id.location_code,
-                    channel=pick.waveform_id.channel_code,
+        stream = Stream()
+        for station in stations:
+            logging.info(
+                'Download data for {network}.{station}.{location}.{channel} \
+from {starttime} to {endtime}'.format(
                     starttime=starttime,
                     endtime=endtime,
+                    **station))
+            try:
+                stream += self.client.get_waveforms(
+                    starttime=starttime,
+                    endtime=endtime,
+                    **station,
                 )
             except FDSNNoDataException as err:
                 logging.warning(err)
