@@ -16,8 +16,8 @@ from pyshakealert.tankplayer import tankfile
 
 # Constants
 DEFAULT_FDSNWS = 'http://sc3-stage.seismo.nrcan.gc.ca'
-DEFAULT_PAD_BEFORE = 60  # seconds
-DEFAULT_PAD_AFTER = 600  # seconds
+DEFAULT_PAD_BEFORE = 120  # seconds
+DEFAULT_PAD_AFTER = 300  # seconds
 DEFAULT_BUFFER_SIZE = 1  # seconds
 DEFAULT_MS2TANK = '/app/eewdata/ew/bin/ms2tank'
 
