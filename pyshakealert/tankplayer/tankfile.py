@@ -55,7 +55,6 @@ def from_stream(
     :see: from_mseed_file
     """
     fp = tempfile.NamedTemporaryFile(mode='wb')
-    print(stream.__str__(extended=True))
     stream.write(fp.name, format='MSEED', reclen=512, encoding='STEIM2')
     return from_mseed_file(fp.name, **kwargs)
 
