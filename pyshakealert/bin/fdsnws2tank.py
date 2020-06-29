@@ -18,6 +18,7 @@ from pyshakealert.tankplayer import tankfile
 DEFAULT_FDSNWS = 'http://sc3-stage.seismo.nrcan.gc.ca'
 DEFAULT_PAD_BEFORE = 60  # seconds
 DEFAULT_PAD_AFTER = 600  # seconds
+DEFAULT_BUFFER_SIZE = 1  # seconds
 DEFAULT_MS2TANK = '/app/eewdata/ew/bin/ms2tank'
 
 
@@ -56,6 +57,12 @@ extract miniseed information.')
         type=float,
         help=f'Pad after in seconds (default: {DEFAULT_PAD_AFTER})')
     parser.add_argument(
+        '--buffer-size',
+        default=DEFAULT_BUFFER_SIZE,
+        type=float,
+        help=f'Split traces in streams by seconds \
+(default: {DEFAULT_BUFFER_SIZE})')
+    parser.add_argument(
         '--output',
         default=sys.stdout.buffer,
         help='Output file (default: stdout)')
@@ -86,7 +93,8 @@ extract miniseed information.')
         tankcontent = tankgen.from_eventid(
             args.eventid,
             pad_before=args.pad_before,
-            pad_after=args.pad_after)
+            pad_after=args.pad_after,
+            buffer_size=args.buffer_size)
 
     logging.info(f'Writting results to {args.output}')
     resource = open(args.output, 'wb') \

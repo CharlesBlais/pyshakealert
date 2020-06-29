@@ -17,6 +17,7 @@ DEFAULT_MS2TANK = '/app/eewdata/ew/bin/ms2tank'
 DEFAULT_TIMEOUT = 10  # seconds
 DEFAULT_PAD_BEFORE = 60  # seconds
 DEFAULT_PAD_AFTER = 600  # seconds
+DEFAULT_BUFFER_SIZE = 1  # seconds
 
 
 class TankException(Exception):
@@ -54,8 +55,37 @@ def from_stream(
     :see: from_mseed_file
     """
     fp = tempfile.NamedTemporaryFile(mode='wb')
+    print(stream.__str__(extended=True))
     stream.write(fp.name, format='MSEED', reclen=512, encoding='STEIM2')
     return from_mseed_file(fp.name, **kwargs)
+
+
+def split_stream(
+    stream: Stream,
+    buffer_size: float
+) -> Stream:
+    """
+    Split stream traces by the buffer size and sort all of them by
+    the starttime
+    """
+    # no data, no splitting
+    if len(stream) == 0:
+        return stream
+
+    # get the starttime to start the splitting
+    starttime = min([trace.stats.starttime for trace in stream])
+    endtime = max([trace.stats.endtime for trace in stream])
+
+    stream_split = Stream()
+    current = starttime
+    while current < endtime:
+        for trace in stream:
+            stream_split.append(trace.slice(
+                starttime=current,
+                endtime=current + buffer_size - trace.stats.delta
+            ))
+        current += buffer_size
+    return stream_split
 
 
 class TankGenerator(object):
@@ -82,8 +112,9 @@ class TankGenerator(object):
     def from_event(
         self,
         event: Event,
-        pad_before: int = DEFAULT_PAD_BEFORE,
-        pad_after: int = DEFAULT_PAD_AFTER,
+        pad_before: float = DEFAULT_PAD_BEFORE,
+        pad_after: float = DEFAULT_PAD_AFTER,
+        buffer_size: float = DEFAULT_BUFFER_SIZE,
     ) -> bytes:
         """
         Convert and obspy event to tankfile
@@ -113,8 +144,15 @@ from {starttime} to {endtime}')
                 )
             except FDSNNoDataException as err:
                 logging.warning(err)
+
+        # Split the stream by buffer size for the tankfile, the streams
+        # need to be small and in small buffer sizes for tankfile playback
+        stream = split_stream(stream, buffer_size)
+
         return from_stream(
-            stream, application=self.application, timeout=self.timeout)
+            stream,
+            application=self.application,
+            timeout=self.timeout)
 
     def from_eventid(
         self,
