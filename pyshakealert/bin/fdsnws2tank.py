@@ -48,10 +48,12 @@ extract miniseed information.')
     parser.add_argument(
         '--pad-before',
         default=DEFAULT_PAD_BEFORE,
+        type=float,
         help=f'Pad before in seconds (default: {DEFAULT_PAD_BEFORE})')
     parser.add_argument(
         '--pad-after',
         default=DEFAULT_PAD_AFTER,
+        type=float,
         help=f'Pad after in seconds (default: {DEFAULT_PAD_AFTER})')
     parser.add_argument(
         '--output',
