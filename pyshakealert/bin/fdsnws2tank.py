@@ -10,6 +10,7 @@ import logging
 
 # Third-party libraries
 from obspy.core.event import read_events
+from dateutil.parser import parse
 
 # User-contributed libraries
 from pyshakealert.tankplayer import tankfile
@@ -68,6 +69,10 @@ extract miniseed information.')
         help='Radius in degrees to take from the event location.  \
 If not set, the stations with picks will be selected.')
     parser.add_argument(
+        '--force-starttime',
+        default=None,
+        help='Force starttime to this time')
+    parser.add_argument(
         '--output',
         default=sys.stdout.buffer,
         help='Output file (default: stdout)')
@@ -89,19 +94,24 @@ If not set, the stations with picks will be selected.')
 
     tankgen = tankfile.TankGenerator(args.fdsnws, application=args.ms2tank)
 
+    force_starttime = None if args.force_starttime is None \
+        else parse(args.force_starttime)
+
     if args.quakeml is not None:
         tankcontent = tankgen.from_event(
             read_events(args.quakeml),
             radius=args.radius,
             pad_before=args.pad_before,
-            pad_after=args.pad_after)
+            pad_after=args.pad_after,
+            force_starttime=force_starttime)
     else:
         tankcontent = tankgen.from_eventid(
             args.eventid,
             radius=args.radius,
             pad_before=args.pad_before,
             pad_after=args.pad_after,
-            buffer_size=args.buffer_size)
+            buffer_size=args.buffer_size,
+            force_starttime=force_starttime)
 
     logging.info(f'Writting results to {args.output}')
     resource = open(args.output, 'wb') \

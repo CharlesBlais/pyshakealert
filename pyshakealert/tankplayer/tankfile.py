@@ -5,10 +5,11 @@ import os
 import subprocess
 import tempfile
 import logging
-from typing import Optional
+import datetime
+from typing import Optional, Union
 
 # Third-party applications
-from obspy import Stream
+from obspy import Stream, UTCDateTime
 from obspy.clients.fdsn import Client
 from obspy.core.event.event import Event
 from obspy.clients.fdsn.header import FDSNNoDataException
@@ -116,6 +117,8 @@ class TankGenerator(object):
         pad_before: float = DEFAULT_PAD_BEFORE,
         pad_after: float = DEFAULT_PAD_AFTER,
         buffer_size: float = DEFAULT_BUFFER_SIZE,
+        force_starttime: Optional[
+            Union[datetime.datetime, UTCDateTime]] = None,
     ) -> bytes:
         """
         Convert and obspy event to tankfile
@@ -167,6 +170,18 @@ from {starttime} to {endtime}'.format(
                 )
             except FDSNNoDataException as err:
                 logging.warning(err)
+
+        # Correct the startttime of the streams if its set
+        logging.info(f'Stream before offset: {stream}')
+        offset = 0
+        if isinstance(force_starttime, datetime.datetime):
+            offset = UTCDateTime(force_starttime) - starttime
+        elif isinstance(force_starttime, UTCDateTime):
+            offset = force_starttime - starttime
+        logging.info(f'Offsetting results with {offset} seconds')
+        for trace in stream:
+            trace.stats.starttime += offset
+        logging.info(f'Stream after offset: {stream}')
 
         # Split the stream by buffer size for the tankfile, the streams
         # need to be small and in small buffer sizes for tankfile playback
