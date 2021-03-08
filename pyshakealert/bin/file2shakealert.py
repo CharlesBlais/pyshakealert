@@ -13,7 +13,7 @@ import datetime
 from pyshakealert.message.client import Client
 
 # Constants
-DEFAULT_SHAKEALERT_HOST = 'eew-cn-int1.seismo.nrcan.gc.ca'
+DEFAULT_SHAKEALERT_HOST = 'localhost'
 DEFAULT_SHAKEALERT_PORT = 61613
 SHAKEALERT_STOMP_PORTS = [61613, 62613, 63613]
 

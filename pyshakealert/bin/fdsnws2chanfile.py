@@ -49,6 +49,14 @@ def fdsnws2chanfile():
         default='HN?',
         help='Channel code (default: HN?)')
     parser.add_argument(
+        '--starttime',
+        default=None,
+        help='Start time of the station (default: now)')
+    parser.add_argument(
+        '--endtime',
+        default=None,
+        help='End time of the station (default: None)')
+    parser.add_argument(
         '--output',
         default=sys.stdout,
         help='Output file (default: stdout)')
@@ -72,12 +80,18 @@ def fdsnws2chanfile():
         f'Getting inventory for {args.network}.{args.station}\
 .{args.location}.{args.channel}')
 
+    st = UTCDateTime(args.starttime) if args.starttime is not None else None
+    et = UTCDateTime(args.endtime) if args.endtime is not None else None
+
     inventory = client.get_stations(
         network=args.network,
         station=args.station,
         location=args.location,
-        channel=args.channel, level='response',
-        starttime=UTCDateTime())
+        channel=args.channel,
+        level='response',
+        starttime=st,
+        endtime=et,
+    )
 
     logging.info(f'Inventory found: {inventory}')
     logging.info(f'Writing to {args.output}')
