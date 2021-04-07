@@ -146,7 +146,7 @@ username {self.username}')
             logging.info(f'Adding custom message listener {listener}')
             self.conn.set_listener('', listener)
         logging.info(f'Subscribing to topic {topic}')
-        self.conn.subscribe(f'/topic/{topic}', subscription_id)
+        self.conn.subscribe(topic, subscription_id)
         # although we exit the routine, the thread is still running until
         # the object is destroyed
 
@@ -196,7 +196,7 @@ listen, use connect')
         logging.info(f'Sending message to broker topic {topic} \
 with header: {headers}')
         self.conn.send(
-            destination=f'/topic/{topic}',
+            destination=topic,
             body=body.encode('utf-8') if isinstance(body, str) else body,
             content_type=content_type,
             headers=headers,

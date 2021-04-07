@@ -81,10 +81,12 @@ def split_stream(
     current = starttime
     while current < endtime:
         for trace in stream:
-            stream_split.append(trace.slice(
+            subtrace = trace.slice(
                 starttime=current,
                 endtime=current + buffer_size - trace.stats.delta
-            ))
+            )
+            if len(subtrace.data) != 0:
+                stream_split.append(subtrace)
         current += buffer_size
     return stream_split
 

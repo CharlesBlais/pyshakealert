@@ -89,3 +89,4 @@ def file2shakealert():
         expires=datetime.timedelta(seconds=args.expires),
         message_type=args.message_type
     )
+    client.disconnect()
