@@ -14,30 +14,27 @@ from dateutil.parser import parse
 
 # User-contributed libraries
 from pyshakealert.tankplayer import tankfile
+from pyshakealert.config import get_app_settings
 
 # Constants
-DEFAULT_FDSNWS = 'http://sc3-stage.seismo.nrcan.gc.ca'
 DEFAULT_PAD_BEFORE = 120  # seconds
 DEFAULT_PAD_AFTER = 300  # seconds
 DEFAULT_BUFFER_SIZE = 5  # seconds
-DEFAULT_MS2TANK = '/app/eewdata/ew/bin/ms2tank'
 
 
 def fdsnws2tank():
     """
     Call the FDSN-WS, extract the event and waveform information
     """
+    settings = get_app_settings()
+
     parser = argparse.ArgumentParser(
         description='Query FDSN-WS for event information (or quakeml file) and \
 extract miniseed information.')
     parser.add_argument(
         '--fdsnws',
-        default=DEFAULT_FDSNWS,
-        help=f'FDSNWS (default: {DEFAULT_FDSNWS})')
-    parser.add_argument(
-        '--ms2tank',
-        default=DEFAULT_MS2TANK,
-        help=f'ms2tank application (default: {DEFAULT_MS2TANK})')
+        default=settings.fdsnws,
+        help=f'FDSNWS (default: {settings.fdsnws})')
     parser.add_argument(
         '--eventid',
         default=None,

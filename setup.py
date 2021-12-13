@@ -13,6 +13,8 @@ from os import path
 # Python 3 only projects can skip this import
 from io import open
 
+import versioneer
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -41,7 +43,8 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.6',  # Required
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -137,12 +140,13 @@ setup(
     install_requires=[
         'jinja2',
         'stomp.py',
-        'xmltodict',
         'python-dateutil',
         'geopandas',
         'shapely',
         'paramiko',
         'obspy',
+        'pydantic',
+        'xsdata',
     ],  # Optional
 
     # List addidetect (e.g. development
@@ -169,8 +173,7 @@ setup(
     package_data={  # Optional
         'pyshakealert': [
             'files/templates/*',
-            'files/schemas/*',
-            'files/shapefiles/*'
+            'files/schemas/*'
         ],
     },
 
@@ -190,9 +193,12 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'shake_fdsnws2chanfile=pyshakealert.bin.fdsnws2chanfile:fdsnws2chanfile',
-            'shake_file2shakealert=pyshakealert.bin.file2shakealert:file2shakealert',
-            'shake_fdsnws2tank=pyshakealert.bin.fdsnws2tank:fdsnws2tank',
+            'shake_fdsnws2chanfile=\
+pyshakealert.bin.fdsnws2chanfile:fdsnws2chanfile',
+            'shake_file2shakealert=\
+pyshakealert.bin.file2shakealert:file2shakealert',
+            'shake_fdsnws2tank=\
+pyshakealert.bin.fdsnws2tank:fdsnws2tank',
         ],
     },
 

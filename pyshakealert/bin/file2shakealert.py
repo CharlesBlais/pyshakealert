@@ -11,11 +11,11 @@ import datetime
 
 # User-contributed libraries
 from pyshakealert.message.client import Client
+from pyshakealert.config import get_app_settings
 
 # Constants
 DEFAULT_SHAKEALERT_HOST = 'localhost'
 DEFAULT_SHAKEALERT_PORT = 61613
-SHAKEALERT_STOMP_PORTS = [61613, 62613, 63613]
 
 
 def file2shakealert():
@@ -23,18 +23,19 @@ def file2shakealert():
     Send messages on any topic on the ShakeAlert system
     and output the result to stdout
     """
+    settings = get_app_settings()
+
     parser = argparse.ArgumentParser(
         description='ShakeAlert message sender (simplified stomp utility)')
     parser.add_argument(
         '-H', '--host',
-        default=DEFAULT_SHAKEALERT_HOST,
-        help='ShakeAlert host (default: %s)' % DEFAULT_SHAKEALERT_HOST)
+        default=settings.amq_host,
+        help='ShakeAlert host (default: %s)' % settings.amq_host)
     parser.add_argument(
         '-P', '--port',
-        default=DEFAULT_SHAKEALERT_PORT,
-        choices=SHAKEALERT_STOMP_PORTS,
+        default=settings.amq_port,
         type=int,
-        help='ActiveMQ stomp port (default: %d)' % DEFAULT_SHAKEALERT_PORT)
+        help='ActiveMQ stomp port (default: %d)' % settings.amq_port)
     parser.add_argument(
         '-t', '--topic',
         default='eew.sys.dm.data',

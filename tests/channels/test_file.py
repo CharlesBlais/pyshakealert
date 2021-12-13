@@ -15,29 +15,23 @@ from obspy.clients.fdsn.client import Client
 
 # User-contributed libraries
 import pyshakealert.channels.file
-
-# Constants
-FDSNWS = 'http://fdsn.seismo.nrcan.gc.ca'
+from pyshakealert.config import get_app_settings
 
 
-@pytest.fixture
-def inventory():
+@pytest.mark.enable_socket
+def test_chanfile_create():
     """
-    Dummy inventory content using exsiting FDSNWS
+    Test creation of chanfile
     """
-    client = Client(FDSNWS)
-    return client.get_stations(
+    settings = get_app_settings()
+    client = Client(settings.fdsnws)
+    inventory = client.get_stations(
         network='CN',
         station='ORIO',
         channel='HN?',
         level='response',
         starttime=UTCDateTime())
 
-
-def test_chanfile_create(inventory):
-    """
-    Test creation of chanfile
-    """
     # Create StringIO that will hold our response
     resource = io.StringIO()
     # Generate the file in memory
@@ -46,4 +40,5 @@ def test_chanfile_create(inventory):
     resource.seek(0)
     # get the content
     content = resource.getvalue()
+    print(content)
     assert '# 3 rows returned' in content

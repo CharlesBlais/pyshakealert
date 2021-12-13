@@ -1,18 +1,20 @@
 """
 ..  codeauthor:: Charles Blais
 """
-from pyshakealert.message.event.base import BaseFloatUnits, BaseDatetimeUnits
+from dataclasses import dataclass, field
+
+from .base import BaseFloatUnits, BaseDatetimeUnits
 
 
+@dataclass
 class OriginTimeUncertainty(BaseFloatUnits):
-    """Event message origin time"""
-    def __init__(self, *args, **kwargs):
-        super(OriginTimeUncertainty, self).__init__(*args, **kwargs)
-        self.units = 'sec'
+    units: str = field(
+        default='sec',
+        metadata=dict(type="Attribute"))
 
 
+@dataclass
 class OriginTime(BaseDatetimeUnits):
-    """Event message origin time"""
-    def __init__(self, *args, **kwargs):
-        super(OriginTime, self).__init__(*args, **kwargs)
-        self.units = 'UTC'
+    units: str = field(
+        default='UTC',
+        metadata=dict(type="Attribute"))

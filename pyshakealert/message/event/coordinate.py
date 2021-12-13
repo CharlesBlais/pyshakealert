@@ -1,20 +1,20 @@
 """
 ..  codeauthor:: Charles Blais
 """
-from pyshakealert.message.event.base import BaseFloatUnits
+from dataclasses import dataclass, field
+
+from .base import BaseFloatUnits
 
 
+@dataclass
 class CoordinateUncertainty(BaseFloatUnits):
-    """Event message coordinate"""
-    def __init__(self, *args, **kwargs):
-        super(CoordinateUncertainty, self).__init__(*args, **kwargs)
-        if not self.units:
-            self.units = 'deg'
+    units: str = field(
+        default='deg',
+        metadata=dict(type="Attribute"))
 
 
+@dataclass
 class Coordinate(BaseFloatUnits):
-    """Event message coordinate"""
-    def __init__(self, *args, **kwargs):
-        super(Coordinate, self).__init__(*args, **kwargs)
-        if not self.units:
-            self.units = 'deg'
+    units: str = field(
+        default='deg',
+        metadata=dict(type="Attribute"))

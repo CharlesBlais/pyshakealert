@@ -14,37 +14,27 @@ from obspy.clients.fdsn import Client
 from obspy.core.event.event import Event
 from obspy.clients.fdsn.header import FDSNNoDataException
 
-# Constants
-DEFAULT_MS2TANK = '/app/eewdata/ew/bin/ms2tank'
-DEFAULT_TIMEOUT = 10  # seconds
-DEFAULT_PAD_BEFORE = 60  # seconds
-DEFAULT_PAD_AFTER = 600  # seconds
-DEFAULT_BUFFER_SIZE = 1  # seconds
+from pyshakealert.exceptions import TankException, EmptyEventException
+from pyshakealert.config import get_app_settings
 
 
-class TankException(Exception):
-    """Tankfile exception"""
-
-
-class EmptyEventException(Exception):
-    """Empty event exception"""
+settings = get_app_settings()
 
 
 def from_mseed_file(
     filename: str,
-    application: str = DEFAULT_MS2TANK,
-    timeout: int = DEFAULT_TIMEOUT,
+    app: str = settings.ms2tank,
+    timeout: int = settings.ms2tank_timeout,
 ) -> bytes:
     """
     Convert miniseed file to tank file using application
     """
-    if not os.path.exists(application):
-        raise TankException(f'Could not find {application}')
+    if not os.path.exists(app):
+        raise TankException(f'Could not find {app}')
     if not os.path.exists(filename):
         raise TankException(f'Tank input mseed {filename} does not exist')
-    logging.info(f'Converting mseed to tank: {application} {filename}')
-    return subprocess.check_output(
-        [application, filename], timeout=DEFAULT_TIMEOUT)
+    logging.info(f'Converting mseed to tank: {app} {filename}')
+    return subprocess.check_output([app, filename], timeout=timeout)
 
 
 def from_stream(
@@ -104,21 +94,19 @@ class TankGenerator(object):
     """
     def __init__(
         self,
-        fdsnws: str,
-        application: str = DEFAULT_MS2TANK,
-        timeout: int = DEFAULT_TIMEOUT
+        fdsnws: str = settings.fdsnws,
+        timeout: int = settings.ms2tank_timeout
     ):
         self.client = Client(fdsnws)
-        self.application = application
         self.timeout = timeout
 
     def from_event(
         self,
         event: Event,
         radius: Optional[float] = None,
-        pad_before: float = DEFAULT_PAD_BEFORE,
-        pad_after: float = DEFAULT_PAD_AFTER,
-        buffer_size: float = DEFAULT_BUFFER_SIZE,
+        pad_before: float = settings.ms2tank_pad_before,
+        pad_after: float = settings.ms2tank_pad_after,
+        buffer_size: float = settings.ms2tank_buffer_size,
         force_starttime: Optional[
             Union[datetime.datetime, UTCDateTime]] = None,
     ) -> bytes:
@@ -191,7 +179,6 @@ from {starttime} to {endtime}'.format(
 
         return from_stream(
             stream,
-            application=self.application,
             timeout=self.timeout)
 
     def from_eventid(

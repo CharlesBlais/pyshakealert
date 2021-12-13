@@ -1,26 +1,33 @@
 '''
 ..  codeauthor:: Charles Blais
 '''
-import json
+from xsdata.formats.dataclass.parsers import XmlParser
+from xsdata.formats.dataclass.serializers import XmlSerializer
+from xsdata.formats.dataclass.serializers.config import SerializerConfig
 
-import xmltodict
-
-from pyshakealert.message.event.event import Event
+from .event import Event
 
 
 def from_string(content: str) -> Event:
     '''
     Parse from string.  String should be an event_message
     '''
-    xmldoc = json.loads(json.dumps(xmltodict.parse(content)))
-    if 'event_message' not in xmldoc:
-        raise ValueError(
-            f'Content of XML should be a event_message, received {content}')
-    return Event(**xmldoc['event_message'])
+    parser = XmlParser()
+    return parser.from_string(content, Event)
 
 
 def from_file(filename: str) -> Event:
     '''
     Parse content from file which should be an event_message
     '''
-    return from_string(open(filename).read())
+    parser = XmlParser()
+    return parser.parse(filename, Event)
+
+
+def to_string(event: Event) -> str:
+    '''
+    Convert an event to string object
+    '''
+    config = SerializerConfig(pretty_print=True)
+    serializer = XmlSerializer(config=config)
+    return serializer.render(event)

@@ -15,10 +15,7 @@ from obspy import UTCDateTime
 
 # User-contributed libraries
 import pyshakealert.channels.file
-
-# Constants
-DEFAULT_FDSNWS = 'http://fdsn.seismo.nrcan.gc.ca'
-USER = getpass.getuser()
+from pyshakealert.config import get_app_settings
 
 
 def fdsnws2chanfile():
@@ -26,12 +23,15 @@ def fdsnws2chanfile():
     Call the FDSN-WS, extract the channel information
     and creates the relevant chanfile
     """
+    settings = get_app_settings()
+    user = getpass.getuser()
+
     parser = argparse.ArgumentParser(
         description='Query FDSN-WS to generate channel file')
     parser.add_argument(
         '--fdsnws',
-        default=DEFAULT_FDSNWS,
-        help='FDSNWS (default: %s)' % DEFAULT_FDSNWS)
+        default=settings.fdsnws,
+        help=f'FDSNWS (default: {settings.fdsnws})')
     parser.add_argument(
         '--network',
         default='CN',
@@ -95,4 +95,4 @@ def fdsnws2chanfile():
 
     logging.info(f'Inventory found: {inventory}')
     logging.info(f'Writing to {args.output}')
-    pyshakealert.channels.file.write(args.output, inventory, user=USER)
+    pyshakealert.channels.file.write(args.output, inventory, user=user)

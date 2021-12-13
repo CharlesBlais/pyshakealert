@@ -1,99 +1,47 @@
 """
 ..  codeauthor:: Charles Blais
 """
-from typing import Union, List, SupportsInt
+from dataclasses import dataclass, field
+from typing import List
+
+import pandas as pd
+import geopandas as gpd
 
 
-class GroundMotionMapField(dict):
-    """Grid field as described in gmmap_information of schema"""
-    @property
-    def index(self) -> int:
-        """Get the index of the data on the map (starts at 1)"""
-        return int(self.get('@index', 0))
-
-    @index.setter
-    def index(self, value: SupportsInt) -> None:
-        """Set the index of the data in the map"""
-        self['@index'] = int(value)
-
-    @property
-    def units(self) -> str:
-        """Get the units of the data on the map"""
-        return self.get('@units', '')
-
-    @units.setter
-    def units(self, value: str) -> None:
-        """Set the units of the data in the map"""
-        self['@units'] = value
-
-    @property
-    def name(self) -> str:
-        """Get the name of the data on the map"""
-        return self.get('@name', '')
-
-    @name.setter
-    def name(self, value: str) -> None:
-        """Set the name of the data in the map"""
-        allowed = ['LAT', 'LON', 'PGA', 'PGV', 'MMI']
-        if value not in allowed:
-            raise ValueError(
-                f'Unsupported GM map field of {value}, must be \
-{",".join(allowed)}')
-        self['@name'] = value
+@dataclass
+class GroundMotionGridField:
+    index: int = field(
+        metadata=dict(type="Attribute"))
+    name: str = field(
+        metadata=dict(type="Attribute"))
+    units: str = field(
+        default='',
+        metadata=dict(type="Attribute"))
 
 
-class GroundMotionMapFields(list):
-    """Grid fields list as described in gmmap_information of schema"""
-    def __init__(self, *args, **kwargs):
-        # Convert all args to contributor object
-        fields = [GroundMotionMapField(**arg) for arg in args]
-        if not fields:
-            fields = [GroundMotionMapField()]
-        super(GroundMotionMapFields, self).__init__(fields, **kwargs)
-
-
-class GroundMotionMap(dict):
-    """GM map information as described in gmmap_information of schema"""
-    def __init__(self, *args, **kwargs):
-        super(GroundMotionMap, self).__init__(*args, **kwargs)
-        self.fields = self.fields
+@dataclass
+class GroundMotionMapPrediction:
+    number: int = field(
+        default=0,
+        metadata=dict(type="Attribute"))
+    grid_field: List[GroundMotionGridField] = field(
+        default_factory=list)
+    grid_data: str = field(
+        default='')
 
     @property
-    def fields(self) -> GroundMotionMapFields:
-        """Get grid fields"""
-        value = self.get('grid_field', GroundMotionMapFields())
-        # optional field so force convert if requested
-        return GroundMotionMapFields(*value) \
-            if not isinstance(value, GroundMotionMapFields) \
-            else value
-
-    @fields.setter
-    def fields(self, value: List) -> None:
-        """Set grid fields"""
-        self['grid_field'] = GroundMotionMapFields(*value)
-
-    @property
-    def grid(self) -> List:
+    def grid(self) -> List[List[float]]:
         """Get values of the grid
 
         For simplicity of converation from and to xmltodict structure,
         we store the information of the polygons as string and convert
         them on request only.
         """
-        content: str = self.get('grid_data', '')
+        content: str = self.grid_data
         return [
             [float(coord) for coord in coords.split(" ")]
-            for coords in content.split("\n")
+            for coords in content.strip().split("\n")
         ]
-
-    @grid.setter
-    def grid(self, value: Union[str, List]) -> None:
-        """Set value of the grid"""
-        if isinstance(value, list):
-            self['#text'] = "\n".join([" ".join(sublist) for sublist in value])
-        else:
-            self['#text'] = value
-        self['@number'] = self['#text'].count(",")
 
     def to_dataframe(self):
         """Convert the grid to dataframe
@@ -107,20 +55,17 @@ class GroundMotionMap(dict):
 
         :rtype: :class:`geopandas.GeoDataFrame`
         """
-        import pandas as pd
-        import geopandas
-
         # create a sorted list of fields
         columns = {}
-        for field in self.fields:
-            columns[field.index] = field.name
+        for grid_field in self.grid_field:
+            columns[grid_field.index] = grid_field.name
 
         # Create the basic pandas dataframe and convert
         # the LAT and LON columns to geometry points
         df = pd.DataFrame(self.grid, columns=[
             columns[i] for i in sorted(columns)])
 
-        return geopandas.GeoDataFrame(
+        return gpd.GeoDataFrame(
             df,
-            geometry=geopandas.points_from_xy(df.LON, df.LAT)
+            geometry=gpd.points_from_xy(df.LON, df.LAT)
         )

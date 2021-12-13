@@ -3,15 +3,11 @@
 """
 import logging
 import io
-from pkg_resources import resource_filename
 
 # Third-party module
 from lxml import etree
 
-# Constants
-DEFAULT_DM_SCHEMA = resource_filename(
-    'pyshakealert',
-    'files/schemas/ShakeAlert_Message_v10_20191004.xsd')
+from pynpas.config import get_app_settings
 
 
 def is_xml(content: bytes) -> bool:
@@ -61,7 +57,6 @@ def __validate_with_schema(
 
 def is_decision_module(
     content: bytes,
-    schema: str = DEFAULT_DM_SCHEMA
 ) -> bool:
     """
     Validate using schema for DM
@@ -70,4 +65,5 @@ def is_decision_module(
     :param str schema: schema file
     :rtype: bool
     """
-    return __validate_with_schema(content, schema)
+    settings = get_app_settings()
+    return __validate_with_schema(content, settings.dm_schema)

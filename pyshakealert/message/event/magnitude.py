@@ -1,18 +1,20 @@
 """
 ..  codeauthor:: Charles Blais
 """
-from pyshakealert.message.event.base import BaseFloatUnits
+from dataclasses import dataclass, field
+
+from .base import BaseFloatUnits
 
 
+@dataclass
 class MagnitudeUncertainty(BaseFloatUnits):
-    """Event message magnitude"""
-    def __init__(self, *args, **kwargs):
-        super(MagnitudeUncertainty, self).__init__(*args, **kwargs)
-        self.units = 'Mw'
+    units: str = field(
+        default='Mw',
+        metadata=dict(type="Attribute"))
 
 
+@dataclass
 class Magnitude(BaseFloatUnits):
-    """Event message magnitude"""
-    def __init__(self, *args, **kwargs):
-        super(Magnitude, self).__init__(*args, **kwargs)
-        self.units = 'Mw'
+    units: str = field(
+        default='Mw',
+        metadata=dict(type="Attribute"))

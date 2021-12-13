@@ -27,20 +27,11 @@ It is currently unknown if the channel description is a mandatory field.
 """
 import datetime
 from typing import Union, Optional, TextIO
-from pkg_resources import resource_filename
 
 # Third-party libraries
-from jinja2 import Environment, FileSystemLoader
 from obspy.core.inventory.inventory import Inventory
 
-# Constants
-J2_ENV = Environment(
-    loader=FileSystemLoader(
-        resource_filename('pyshakealert', 'files/templates')
-    ),
-    trim_blocks=True
-)
-TEMPLATE = 'chanfile_local.dat'
+from pyshakealert.config import get_app_settings
 
 
 def write(
@@ -58,6 +49,8 @@ def write(
     :param inventory: list of channel
     :param str user: user name signature (optional)
     """
+    settings = get_app_settings()
+
     resource = open(filename, 'w') if isinstance(filename, str) else filename
 
     # Recalculate overall sensitivity of all channnels
@@ -66,7 +59,7 @@ def write(
             for channel in station:
                 channel.response.recalculate_overall_sensitivity()
 
-    resource.write(J2_ENV.get_template(TEMPLATE).render(
+    resource.write(settings.template_chanfile.render(
         now=datetime.datetime.now(),
         user='unknown' if not user else user,
         inventory=inventory

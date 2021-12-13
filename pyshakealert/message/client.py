@@ -14,19 +14,14 @@ from typing import List, Union, Optional, Callable
 # Third-party library
 import stomp
 
-# Every message sent have a default expire time defined as a timedelta
-DEFAULT_EXPIRE = datetime.timedelta(seconds=600)
+from pyshakealert.exceptions import \
+    ConnectFailedException, MissingCredentialsException
+from pyshakealert.config import get_app_settings
+
+settings = get_app_settings()
 
 
-class ConnectFailedException(stomp.exception.ConnectFailedException):
-    """Custom exception"""
-
-
-class MissingCredentialsException(Exception):
-    """Missing credentials"""
-
-
-class Client():
+class Client:
     """
     Client wrapper for stomp protocol used by ActiveMQ client
     """
@@ -155,7 +150,7 @@ username {self.username}')
         topic: str,
         body: Union[str, bytes],
         content_type: Optional[str] = None,
-        expires: Union[datetime.datetime, datetime.timedelta] = DEFAULT_EXPIRE,
+        expires: float = settings.message_expires,
         message_type: Optional[str] = None,
         message_id: int = 1,
     ) -> None:
@@ -187,11 +182,9 @@ listen, use connect')
         if message_type is not None:
             headers['type'] = message_type
 
-        if isinstance(expires, datetime.datetime):
-            headers['expires'] = "%d" % int(expires.timestamp()*1000)
-        else:
-            headers['expires'] = "%d" % int(
-                (datetime.datetime.now() + expires).timestamp()*1000)
+        headers['expires'] = "%d" % int(
+                (datetime.datetime.now()
+                    + datetime.timedelta(seconds=expires)).timestamp()*1000)
 
         logging.info(f'Sending message to broker topic {topic} \
 with header: {headers}')

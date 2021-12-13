@@ -18,3 +18,10 @@ __pycache__
 
 # Ignore visual studio code
 .vscode
+
+# Ignore env
+.env
+
+# Ignore coverage reports
+.coverage
+coverage.xml

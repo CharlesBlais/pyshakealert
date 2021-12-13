@@ -1,0 +1,51 @@
+'''
+..  codeauthor:: Charles Blais
+'''
+from functools import lru_cache
+from pydantic import BaseSettings
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader, Template
+
+
+class AppSettings(BaseSettings):
+
+    # templates
+    template_dir = str(Path(__file__).parent.joinpath('files', 'templates'))
+    template_channel_file = 'chanfile_local.dat.j2'
+
+    # shakealert
+    dm_schema = str(Path(__file__).parent.joinpath(
+        'files', 'schemas', 'ShakeAlert_Message_v10_20191004.xsd'))
+
+    # earthworm
+    ms2tank = '/app/eewdata/ew/bin/ms2tank'
+    ms2tank_timeout = 10        # seconds
+    ms2tank_pad_before = 60     # seconds
+    ms2tank_pad_after = 600     # seconds
+    ms2tank_buffer_size = 1     # seconds
+
+    # activemq
+    amq_host = 'localhost'
+    amq_username = ''
+    amq_password = ''
+    amq_port = 61613
+
+    message_expires = 600   # seconds
+
+    # fdsnws
+    fdsnws = 'http://fdsn.seismo.nrcan.gc.ca'
+
+    class Config:
+        env_file = '.env'
+        env_prefix = 'shakealert_'
+
+    @property
+    def template_chanfile(self) -> Template:
+        return Environment(
+            loader=FileSystemLoader(self.template_dir),
+            trim_blocks=True).get_template(self.template_channel_file)
+
+
+@lru_cache()
+def get_app_settings() -> AppSettings:
+    return AppSettings()
