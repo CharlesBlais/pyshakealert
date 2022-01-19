@@ -146,7 +146,9 @@ setup(
         'paramiko',
         'obspy',
         'pydantic',
+        'pydantic[dotenv]',
         'xsdata',
+        'click',
     ],  # Optional
 
     # List addidetect (e.g. development
@@ -194,11 +196,11 @@ setup(
     entry_points={  # Optional
         'console_scripts': [
             'shake_fdsnws2chanfile=\
-pyshakealert.bin.fdsnws2chanfile:fdsnws2chanfile',
+pyshakealert.bin.fdsnws2chanfile:main',
             'shake_file2shakealert=\
-pyshakealert.bin.file2shakealert:file2shakealert',
+pyshakealert.bin.file2shakealert:main',
             'shake_fdsnws2tank=\
-pyshakealert.bin.fdsnws2tank:fdsnws2tank',
+pyshakealert.bin.fdsnws2tank:main',
         ],
     },
 

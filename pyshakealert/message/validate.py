@@ -7,7 +7,7 @@ import io
 # Third-party module
 from lxml import etree
 
-from pynpas.config import get_app_settings
+from pyshakealert.config import get_app_settings
 
 
 def is_xml(content: bytes) -> bool:

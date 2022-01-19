@@ -4,90 +4,110 @@ Command-line utilities
 
 ..  codeauthor:: Charles Blais
 """
-import argparse
+from typing import Optional
+
+import click
+
 import sys
 import logging
-import datetime
 
 # User-contributed libraries
 from pyshakealert.message.client import Client
-from pyshakealert.config import get_app_settings
+from pyshakealert.config import get_app_settings, LogLevels
 
-# Constants
-DEFAULT_SHAKEALERT_HOST = 'localhost'
-DEFAULT_SHAKEALERT_PORT = 61613
+settings = get_app_settings()
 
 
-def file2shakealert():
+@click.command()
+@click.option(
+    '-H', '--host',
+    default=settings.amq_host,
+    help='shakealert host'
+)
+@click.option(
+    '-P', '--port',
+    type=int,
+    default=settings.amq_port,
+    help='shakealert port'
+)
+@click.option(
+    '-t', '--topic',
+    required=True,
+    help='shakealert AMQ topic (ex: eew.sys.dm.data)'
+)
+@click.option(
+    '-u', '--username',
+    required=True,
+    help='shakealert AMQ username'
+)
+@click.option(
+    '-p', '--password',
+    required=True,
+    help='shakealert AMQ password'
+)
+@click.option(
+    '-f', '--file',
+    type=click.Path(file_okay=True, dir_okay=False, exists=True),
+    help='read content from file (default: stdin)'
+)
+@click.option(
+    '-e', '--expires',
+    type=int,
+    default=60,
+    help='message expiry time in seconds from now'
+)
+@click.option(
+    '-m', '--message-type',
+    default='new',
+    help='event message type'
+)
+@click.option(
+    '--verbose',
+    type=click.Choice([v.value for v in LogLevels]),
+    help='Verbosity'
+)
+def main(
+    host: str,
+    port: int,
+    topic: str,
+    username: str,
+    password: str,
+    file: Optional[str],
+    expires: int,
+    message_type: str,
+    verbose: Optional[str],
+):
     """
+    ShakeAlert message sender (simplified stomp utility)
+
     Send messages on any topic on the ShakeAlert system
     and output the result to stdout
     """
-    settings = get_app_settings()
-
-    parser = argparse.ArgumentParser(
-        description='ShakeAlert message sender (simplified stomp utility)')
-    parser.add_argument(
-        '-H', '--host',
-        default=settings.amq_host,
-        help='ShakeAlert host (default: %s)' % settings.amq_host)
-    parser.add_argument(
-        '-P', '--port',
-        default=settings.amq_port,
-        type=int,
-        help='ActiveMQ stomp port (default: %d)' % settings.amq_port)
-    parser.add_argument(
-        '-t', '--topic',
-        default='eew.sys.dm.data',
-        help='ShakeAlert topic (default: eew.sys.dm.data)')
-    parser.add_argument(
-        '-u', '--username',
-        required=True,
-        help='Username for connection')
-    parser.add_argument(
-        '-p', '--password',
-        default='eew.sys.dm.data',
-        help='Password for connection')
-    parser.add_argument(
-        '-f', '--file',
-        help='Read content from file (default: stdin)')
-    parser.add_argument(
-        '-e', '--expires',
-        default=60,
-        type=int,
-        help='Message expiry time in seconds from now (default: 60)')
-    parser.add_argument(
-        '-m', '--message-type',
-        default='new',
-        help='Message type (default: new)')
-    parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Verbosity')
-    args = parser.parse_args()
-
-    # Set logging level
-    logging.basicConfig(
-        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s %(funcName)s:\
-            %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.DEBUG if args.verbose else logging.WARNING)
+    settings.amq_host = host
+    settings.amq_port = port
+    settings.amq_username = username
+    settings.amq_password = password
+    settings.message_expires = expires
+    if verbose is not None:
+        settings.log_level = LogLevels[verbose]
+    settings.configure_logging()
 
     # Read content to send
-    if args.file is None:
+    if file is None:
         logging.info('Reading message from stdin')
         body = sys.stdin.read()
     else:
-        logging.info(f'Reading message from {args.file}')
-        body = open(args.file, 'r').read()
+        logging.info(f'Reading message from {file}')
+        body = open(file, 'r').read()
 
     # set signal handlers for stoping listener
-    client = Client(args.host, port=args.port)
-    client.connect(username=args.username, password=args.password)
+    client = Client(settings.amq_host, port=settings.amq_port)
+    client.connect(
+        username=settings.amq_username,
+        password=settings.amq_password)
     client.send(
-        topic=args.topic,
+        topic=topic,
         body=body,
-        expires=datetime.timedelta(seconds=args.expires),
-        message_type=args.message_type
+        message_type=message_type
     )
     client.disconnect()

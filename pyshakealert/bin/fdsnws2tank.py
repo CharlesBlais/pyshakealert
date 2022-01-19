@@ -4,17 +4,19 @@ Command-line utilities
 
 ..  codeauthor:: Charles Blais
 """
-import argparse
+import datetime
+from typing import Optional
+
+import click
+
 import sys
-import logging
 
 # Third-party libraries
 from obspy.core.event import read_events
-from dateutil.parser import parse
 
 # User-contributed libraries
 from pyshakealert.tankplayer import tankfile
-from pyshakealert.config import get_app_settings
+from pyshakealert.config import get_app_settings, LogLevels
 
 # Constants
 DEFAULT_PAD_BEFORE = 120  # seconds
@@ -22,95 +24,104 @@ DEFAULT_PAD_AFTER = 300  # seconds
 DEFAULT_BUFFER_SIZE = 5  # seconds
 
 
-def fdsnws2tank():
+settings = get_app_settings()
+
+
+@click.command()
+@click.option(
+    '--fdsnws',
+    help='FDSNWS'
+)
+@click.option(
+    '--eventid',
+    help='Event ID to request from the FDSN-WS'
+)
+@click.option(
+    '--quakeml',
+    type=click.Path(file_okay=True, dir_okay=False, exists=True),
+    help='QuakeML information to use to get waveform data \
+(overwrite --eventid)'
+)
+@click.option(
+    '--pad-before',
+    type=int,
+    default=DEFAULT_PAD_BEFORE,
+    help='pad before in seconds'
+)
+@click.option(
+    '--pad-after',
+    type=int,
+    default=DEFAULT_PAD_AFTER,
+    help='pad after in seconds'
+)
+@click.option(
+    '--buffer-size',
+    type=int,
+    default=DEFAULT_BUFFER_SIZE,
+    help='split traces in streams by seconds'
+)
+@click.option(
+    '--radius',
+    type=float,
+    default=DEFAULT_BUFFER_SIZE,
+    help='Radius in degrees to take from the event location.  \
+If not set, the stations with picks will be selected.'
+)
+@click.option(
+    '--force-starttime',
+    type=click.DateTime(),
+    help='force starttime to this time'
+)
+@click.option(
+    '--output',
+    type=click.Path(file_okay=True, dir_okay=False, exists=False),
+    help='only use station within end time'
+)
+@click.option(
+    '--verbose',
+    type=click.Choice([v.value for v in LogLevels]),
+    help='Verbosity'
+)
+def main(
+    fdsnws: str,
+    eventid: Optional[str],
+    quakeml: Optional[str],
+    pad_before: int,
+    pad_after: int,
+    buffer_size: int,
+    radius: Optional[float],
+    force_starttime: Optional[datetime.datetime],
+    output: str,
+    verbose: Optional[str],
+):
     """
-    Call the FDSN-WS, extract the event and waveform information
+    Query FDSN-WS for event information (or quakeml file) and \
+extract miniseed information.
     """
-    settings = get_app_settings()
+    settings.fdsnws = fdsnws
+    if verbose is not None:
+        settings.log_level = LogLevels[verbose]
+    settings.configure_logging()
 
-    parser = argparse.ArgumentParser(
-        description='Query FDSN-WS for event information (or quakeml file) and \
-extract miniseed information.')
-    parser.add_argument(
-        '--fdsnws',
-        default=settings.fdsnws,
-        help=f'FDSNWS (default: {settings.fdsnws})')
-    parser.add_argument(
-        '--eventid',
-        default=None,
-        help='Event ID to request from the FDSN-WS')
-    parser.add_argument(
-        '--quakeml',
-        default=None,
-        help='QuakeML information to use to get waveform data \
-(overwrite --eventid)')
-    parser.add_argument(
-        '--pad-before',
-        default=DEFAULT_PAD_BEFORE,
-        type=float,
-        help=f'Pad before in seconds (default: {DEFAULT_PAD_BEFORE})')
-    parser.add_argument(
-        '--pad-after',
-        default=DEFAULT_PAD_AFTER,
-        type=float,
-        help=f'Pad after in seconds (default: {DEFAULT_PAD_AFTER})')
-    parser.add_argument(
-        '--buffer-size',
-        default=DEFAULT_BUFFER_SIZE,
-        type=float,
-        help=f'Split traces in streams by seconds \
-(default: {DEFAULT_BUFFER_SIZE})')
-    parser.add_argument(
-        '--radius',
-        default=None,
-        help='Radius in degrees to take from the event location.  \
-If not set, the stations with picks will be selected.')
-    parser.add_argument(
-        '--force-starttime',
-        default=None,
-        help='Force starttime to this time')
-    parser.add_argument(
-        '--output',
-        default=sys.stdout.buffer,
-        help='Output file (default: stdout)')
-    parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Verbosity')
-    args = parser.parse_args()
+    tankgen = tankfile.TankGenerator()
 
-    # Set logging level
-    logging.basicConfig(
-        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s %(funcName)s:\
-            %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.INFO if args.verbose else logging.WARNING)
-
-    if args.eventid is None and args.quakeml is None:
-        raise IOError('eventid or quakml file must be specified as argument')
-
-    tankgen = tankfile.TankGenerator(args.fdsnws, application=args.ms2tank)
-
-    force_starttime = None if args.force_starttime is None \
-        else parse(args.force_starttime)
-
-    if args.quakeml is not None:
+    if quakeml is not None:
         tankcontent = tankgen.from_event(
-            read_events(args.quakeml),
-            radius=args.radius,
-            pad_before=args.pad_before,
-            pad_after=args.pad_after,
+            read_events(quakeml),
+            radius=radius,
+            pad_before=pad_before,
+            pad_after=pad_after,
+            force_starttime=force_starttime)
+    elif eventid is not None:
+        tankcontent = tankgen.from_eventid(
+            eventid,
+            radius=radius,
+            pad_before=pad_before,
+            pad_after=pad_after,
+            buffer_size=buffer_size,
             force_starttime=force_starttime)
     else:
-        tankcontent = tankgen.from_eventid(
-            args.eventid,
-            radius=args.radius,
-            pad_before=args.pad_before,
-            pad_after=args.pad_after,
-            buffer_size=args.buffer_size,
-            force_starttime=force_starttime)
+        raise IOError('eventid or quakml file must be specified as argument')
 
-    logging.info(f'Writting results to {args.output}')
-    resource = open(args.output, 'wb') \
-        if isinstance(args.output, str) else args.output
-    resource.write(tankcontent)
+    routput = sys.stdout.buffer if output is None else open(output, 'wb')
+    routput.write(tankcontent)
