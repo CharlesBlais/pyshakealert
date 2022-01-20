@@ -9,7 +9,7 @@ protocol.
 """
 import datetime
 import logging
-from typing import List, Union, Optional, Callable
+from typing import List, Union, Optional, Callable, Tuple
 
 # Third-party library
 import stomp
@@ -29,6 +29,8 @@ class Client:
         self,
         host: Union[str, List[str]],
         port: Union[int, List[int]] = 61613,
+        keepalive: bool = False,
+        heartbeats: Tuple[int, int] = (0, 0),
     ) -> None:
         """
         Constructor that establishes the connection to the ActiveMQ broker
@@ -64,7 +66,9 @@ class Client:
         logging.info(f'Initiate connection to {host_and_port}')
         self.conn = stomp.Connection(
             host_and_port,
-            auto_content_length=False)
+            auto_content_length=False,
+            keepalive=keepalive,
+            heartbeats=heartbeats)
 
     def connect(
         self,
