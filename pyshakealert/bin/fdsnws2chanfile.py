@@ -73,7 +73,7 @@ settings = get_app_settings()
     help='only use station within end time'
 )
 @click.option(
-    '--verbose',
+    '--log-level',
     type=click.Choice([v.value for v in LogLevels]),
     help='Verbosity')
 def main(
@@ -85,7 +85,7 @@ def main(
     starttime: Optional[datetime.datetime],
     endtime: Optional[datetime.datetime],
     output: Optional[str],
-    verbose: Optional[str],
+    log_level: Optional[str],
 ):
     """
     Query FDSN-WS to generate channel file
@@ -94,8 +94,8 @@ def main(
     pattern to filter according to the parameter
     """
     settings.fdsnws = fdsnws
-    if verbose is not None:
-        settings.log_level = LogLevels[verbose]
+    if log_level is not None:
+        settings.log_level = LogLevels[log_level]
     settings.configure_logging()
 
     logging.info(f'Connection to FDSN-WS: {settings.fdsnws}')

@@ -201,6 +201,8 @@ pyshakealert.bin.fdsnws2chanfile:main',
 pyshakealert.bin.file2shakealert:main',
             'shake_fdsnws2tank=\
 pyshakealert.bin.fdsnws2tank:main',
+            'shake_play2shakealert=\
+pyshakealert.bin.play2shakealert:main',
         ],
     },
 

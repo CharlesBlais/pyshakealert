@@ -78,7 +78,7 @@ If not set, the stations with picks will be selected.'
     help='only use station within end time'
 )
 @click.option(
-    '--verbose',
+    '--log-level',
     type=click.Choice([v.value for v in LogLevels]),
     help='Verbosity'
 )
@@ -92,15 +92,15 @@ def main(
     radius: Optional[float],
     force_starttime: Optional[datetime.datetime],
     output: str,
-    verbose: Optional[str],
+    log_level: Optional[str],
 ):
     """
     Query FDSN-WS for event information (or quakeml file) and \
 extract miniseed information.
     """
     settings.fdsnws = fdsnws
-    if verbose is not None:
-        settings.log_level = LogLevels[verbose]
+    if log_level is not None:
+        settings.log_level = LogLevels[log_level]
     settings.configure_logging()
 
     tankgen = tankfile.TankGenerator()

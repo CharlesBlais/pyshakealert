@@ -8,12 +8,12 @@ from typing import Optional
 
 import click
 
-import sys
-import logging
-
 # User-contributed libraries
 from pyshakealert.message.client import Client
+
 from pyshakealert.config import get_app_settings, LogLevels
+
+from pyshakealert.player import CSVPlayer
 
 settings = get_app_settings()
 
@@ -31,11 +31,6 @@ settings = get_app_settings()
     help='shakealert port'
 )
 @click.option(
-    '-t', '--topic',
-    required=True,
-    help='shakealert AMQ topic (ex: eew.sys.dm.data)'
-)
-@click.option(
     '-u', '--username',
     required=True,
     help='shakealert AMQ username'
@@ -48,18 +43,8 @@ settings = get_app_settings()
 @click.option(
     '-f', '--file',
     type=click.Path(file_okay=True, dir_okay=False, exists=True),
-    help='read content from file (default: stdin)'
-)
-@click.option(
-    '-e', '--expires',
-    type=int,
-    default=60,
-    help='message expiry time in seconds from now'
-)
-@click.option(
-    '-m', '--message-type',
-    default='new',
-    help='event message type'
+    required=True,
+    help='play CSV file'
 )
 @click.option(
     '--log-level',
@@ -69,12 +54,9 @@ settings = get_app_settings()
 def main(
     host: str,
     port: int,
-    topic: str,
     username: str,
     password: str,
-    file: Optional[str],
-    expires: int,
-    message_type: str,
+    file: str,
     log_level: Optional[str],
 ):
     """
@@ -87,27 +69,20 @@ def main(
     settings.amq_port = port
     settings.amq_username = username
     settings.amq_password = password
-    settings.message_expires = expires
     if log_level is not None:
         settings.log_level = LogLevels[log_level]
     settings.configure_logging()
 
-    # Read content to send
-    if file is None:
-        logging.info('Reading message from stdin')
-        body = sys.stdin.read()
-    else:
-        logging.info(f'Reading message from {file}')
-        body = open(file, 'r').read()
+    # setup the player
+    player = CSVPlayer(file)
 
-    # set signal handlers for stoping listener
+    # set client
     client = Client(settings.amq_host, port=settings.amq_port)
     client.connect(
         username=settings.amq_username,
         password=settings.amq_password)
-    client.send(
-        topic=topic,
-        body=body,
-        message_type=message_type
-    )
+
+    # play the event on the client
+    player.play(client)
+
     client.disconnect()

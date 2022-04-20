@@ -1,0 +1,3 @@
+offset,topic,message_type,filename
+0,eew.sys.dm.data,new,tests/message/examples/SYN_CascadiaShallow_M9.3_00_contour.xml
+1,eew.sys.dm.data,new,tests/message/examples/SYN_CascadiaShallow_M9.3_00_contour.xml
