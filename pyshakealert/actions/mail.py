@@ -5,8 +5,6 @@ import logging
 
 from typing import List
 
-import base64
-
 import smtplib
 
 from email.mime.application import MIMEApplication
@@ -14,6 +12,10 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 
 from email.mime.text import MIMEText
+
+from email.mime.base import MIMEBase
+
+from email import encoders
 
 from dateutil.parser import parse
 
@@ -62,15 +64,20 @@ class Mailer(Client):
         origin_time = parse(event.core_info.orig_time.value)
         delta_seconds = (proc_time - origin_time).total_seconds()
 
-        image = base64.encodebytes(generate(event)).decode('utf-8')
-
         body = settings.template_mail.render(
             event=event,
-            image=image,
             delta_seconds=delta_seconds)
 
-        part = MIMEApplication(to_string(event), Name='event.xml')
-        part['Content-Disposition'] = 'attachment; filename="event.xml"'
+        eventxml = MIMEApplication(to_string(event), Name='event.xml')
+        eventxml['Content-Disposition'] = 'attachment; filename="event.xml"'
+
+        image = MIMEBase('image', 'png', filename='map.png')
+        image.add_header(
+            'Content-Disposition', 'attachment', filename='map.png')
+        image.add_header('X-Attachment-Id', 'map')
+        image.add_header('Content-ID', '<map>')
+        image.set_payload(generate(event))
+        encoders.encode_base64(image)
 
         logging.info(f"Sending email {subject} to {self.recipients} \
 via {settings.smtp_server}")
@@ -82,7 +89,8 @@ via {settings.smtp_server}")
         msg['To'] = ", ".join(self.recipients)
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html'))
-        msg.attach(part)
+        msg.attach(eventxml)
+        msg.attach(image)
         # Send the message via our own SMTP server.
         s.sendmail(msg['From'], self.recipients, msg.as_string())
         # Quit from handler

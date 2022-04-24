@@ -82,7 +82,7 @@ def generate(
 
     ax = plt.axes(projection=imagery.crs)
 
-    ax.set_title(f'M{mag} {units} - {orig_time} - {event.orig_sys}')
+    ax.set_title(f'{mag} {units} - {orig_time} - {event.orig_sys}')
 
     ax.set_extent([
         lon - dlon, lon + dlon,

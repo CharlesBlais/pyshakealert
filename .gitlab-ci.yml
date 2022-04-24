@@ -3,14 +3,12 @@ stages:
   - static code
   - test
 
-image: python:3.7.12
+image: continuumio/miniconda3
 
 before_script:
   - python -V  # Print out python version for debugging
   - python -m pip install --upgrade pip
-  - python -m pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+  - conda install -y -c conda-forge cartopy
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
