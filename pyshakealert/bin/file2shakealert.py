@@ -37,12 +37,10 @@ settings = get_app_settings()
 )
 @click.option(
     '-u', '--username',
-    required=True,
     help='shakealert AMQ username'
 )
 @click.option(
     '-p', '--password',
-    required=True,
     help='shakealert AMQ password'
 )
 @click.option(
@@ -70,8 +68,8 @@ def main(
     host: str,
     port: int,
     topic: str,
-    username: str,
-    password: str,
+    username: Optional[str],
+    password: Optional[str],
     file: Optional[str],
     expires: int,
     message_type: str,
@@ -85,9 +83,13 @@ def main(
     """
     settings.amq_host = host
     settings.amq_port = port
-    settings.amq_username = username
-    settings.amq_password = password
     settings.message_expires = expires
+
+    if username is not None:
+        settings.amq_username = username
+    if password is not None:
+        settings.amq_password = password
+
     if log_level is not None:
         settings.log_level = LogLevels[log_level]
     settings.configure_logging()

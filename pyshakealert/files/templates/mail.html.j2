@@ -1,0 +1,100 @@
+{#
+
+ShakeAlert mail event template
+
+Contains detailed information of the event in XML format
+
+Variables:
+- event = pyshakealert.message.event.event.Event
+#}
+<html>
+    <head>
+        <title>ShakeAlert Event at {{ event.timestamp }}</title>
+    </head>
+    <body>
+        <h1>ShakeAlert Event at {{ event.timestamp }} ({{delta_seconds}} s)</h1>
+
+        <img src="data:image/png;base64, {{ image }}"/>
+
+        <h2>Origin information</h2>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Uncertainty</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Magnitude</th>
+                    <td>{{ event.core_info.mag.value }} {{ event.core_info.mag.units }}</td>
+                    <td>{{ event.core_info.mag_uncer.value }} {{ event.core_info.mag_uncer.units }}</td>
+                </tr>
+                <tr>
+                    <th>Latitude ({{ event.core_info.lat.units }})</th>
+                    <td>{{ event.core_info.lat.value }}</td>
+                    <td>{{ event.core_info.lat_uncer.value }} {{ event.core_info.lat_uncer.units }}</td>
+                </tr>
+                <tr>
+                    <th>Longitude ({{ event.core_info.lon.units }})</th>
+                    <td>{{ event.core_info.lon.value }}</td>
+                    <td>{{ event.core_info.lon_uncer.value }} {{ event.core_info.lon_uncer.units }}</td>
+                </tr>
+                <tr>
+                    <th>Depth ({{ event.core_info.depth.units }})</th>
+                    <td>{{ event.core_info.depth.value }}</td>
+                    <td>{{ event.core_info.depth_uncer.value }} {{ event.core_info.depth_uncer.units }}</td>
+                </tr>
+                <tr>
+                    <th>Origin Time ({{ event.core_info.orig_time.units }})</th>
+                    <td>{{ event.core_info.orig_time.value }}</td>
+                    <td>{{ event.core_info.orig_time_uncer.value }} {{ event.core_info.orig_time_uncer.units }}</td>
+                </tr>
+                <tr>
+                    <th>Likelihood</th>
+                    <td>{{ event.core_info.likelihood }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th># of stations</th>
+                    <td>{{ event.core_info.num_stations }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ event.core_info.id }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Meta information</h2>
+
+        <table border="1">
+            <tbody>
+                <tr>
+                    <th>Origin System</th>
+                    <td>{{ event.orig_sys }}</td>
+                </tr>
+                <tr>
+                    <th>Message Type</th>
+                    <td>{{ event.message_type }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ event.category }}</td>
+                </tr>
+                <tr>
+                    <th>Timestamp</th>
+                    <td>{{ event.timestamp }}</td>
+                </tr>
+                <tr>
+                    <th>Instance</th>
+                    <td>{{ event.instance }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

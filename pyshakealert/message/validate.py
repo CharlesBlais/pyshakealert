@@ -31,7 +31,7 @@ def is_xml(content: bytes) -> bool:
     return True
 
 
-def __validate_with_schema(
+def _validate_with_schema(
     content: bytes,
     schema: str
 ) -> bool:
@@ -66,4 +66,4 @@ def is_decision_module(
     :rtype: bool
     """
     settings = get_app_settings()
-    return __validate_with_schema(content, settings.dm_schema)
+    return _validate_with_schema(content, settings.dm_schema)

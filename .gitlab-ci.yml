@@ -57,7 +57,7 @@ pytest:
   script:
     - *build
     - python -m pip install pytest pytest-cov pytest-socket
-    - pytest --cov-report xml --cov-report term --cov=pyshakealert tests/* --log-level=DEBUG -k "not test_message and not test_tankfile"
+    - pytest tests/* --log-level=DEBUG -k "not test_message and not test_tankfile"
   coverage: '/TOTAL.*\s+(\d+%)$/'
   artifacts:
     reports:

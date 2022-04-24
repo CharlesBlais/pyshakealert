@@ -32,12 +32,10 @@ settings = get_app_settings()
 )
 @click.option(
     '-u', '--username',
-    required=True,
     help='shakealert AMQ username'
 )
 @click.option(
     '-p', '--password',
-    required=True,
     help='shakealert AMQ password'
 )
 @click.option(
@@ -54,21 +52,20 @@ settings = get_app_settings()
 def main(
     host: str,
     port: int,
-    username: str,
-    password: str,
+    username: Optional[str],
+    password: Optional[str],
     file: str,
     log_level: Optional[str],
 ):
     """
-    ShakeAlert message sender (simplified stomp utility)
-
-    Send messages on any topic on the ShakeAlert system
-    and output the result to stdout
+    Play a CSV file with ShakeAlert information
     """
     settings.amq_host = host
     settings.amq_port = port
-    settings.amq_username = username
-    settings.amq_password = password
+    if username is not None:
+        settings.amq_username = username
+    if password is not None:
+        settings.amq_password = password
     if log_level is not None:
         settings.log_level = LogLevels[log_level]
     settings.configure_logging()

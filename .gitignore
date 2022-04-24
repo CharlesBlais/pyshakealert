@@ -22,6 +22,9 @@ __pycache__
 # Ignore env
 .env
 
+# Testing email clients
+emaillist.txt
+
 # Ignore coverage reports
 .coverage
 coverage.xml

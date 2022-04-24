@@ -23,9 +23,12 @@ class AppSettings(BaseSettings):
 %(module)s %(funcName)s: %(message)s'
     log_datefmt: str = '%Y-%m-%d %H:%M:%S'
 
+    # Email server settings
+    email_from: str = 'cnsnopr@seismo.nrcan.gc.ca'
+    smtp_server: str = 'mailhost.seismo.nrcan.gc.ca'
+
     # templates
     template_dir = str(Path(__file__).parent.joinpath('files', 'templates'))
-    template_channel_file = 'chanfile_local.dat.j2'
 
     # shakealert
     dm_schema = str(Path(__file__).parent.joinpath(
@@ -49,6 +52,21 @@ class AppSettings(BaseSettings):
     # fdsnws
     fdsnws = 'http://fdsn.seismo.nrcan.gc.ca'
 
+    # MMI color configuration, array per MMI level from 0
+    mmi_colors = [
+        '#ffffff',  # 0
+        '#ffffff',  # 1
+        '#b4c3fb',  # 2
+        '#82effd',  # 3
+        '#6ffffa',  # 4
+        '#7bfc6c',  # 5
+        '#ffff13',  # 6
+        '#f2b11e',  # 7
+        '#fd680a',  # 8
+        '#f90003',  # 9
+        '#be0006',  # 10
+    ]
+
     class Config:
         env_file = '.env'
         env_prefix = 'shakealert_'
@@ -57,7 +75,13 @@ class AppSettings(BaseSettings):
     def template_chanfile(self) -> Template:
         return Environment(
             loader=FileSystemLoader(self.template_dir),
-            trim_blocks=True).get_template(self.template_channel_file)
+            trim_blocks=True).get_template('chanfile_local.dat.j2')
+
+    @property
+    def template_mail(self) -> Template:
+        return Environment(
+            loader=FileSystemLoader(self.template_dir),
+            trim_blocks=True).get_template('mail.html.j2')
 
     def configure_logging(self):
         '''
