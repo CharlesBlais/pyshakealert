@@ -51,7 +51,8 @@ mypy:
 pytest:
   stage: test
   variables:
-    SHAKEALERT_FDSNWS: 'http://fdsn.seismo.nrcan.gc.ca'
+    SHAKEALERT_FDSNWS: http://fdsn.seismo.nrcan.gc.ca
+    PROJ_LIB: /opt/conda/share/proj
   script:
     - *build
     - python -m pip install pytest pytest-cov pytest-socket
