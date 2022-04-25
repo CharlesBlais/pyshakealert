@@ -150,7 +150,7 @@ setup(
         'xsdata',
         'click',
         'cartopy',
-        'matplotlib'
+        'matplotlib',
     ],  # Optional
 
     # List addidetect (e.g. development

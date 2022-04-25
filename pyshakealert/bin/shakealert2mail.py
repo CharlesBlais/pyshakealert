@@ -16,6 +16,8 @@ import stomp
 
 import time
 
+import traceback
+
 # User-contributed libraries
 from pyshakealert.message.client import Client
 
@@ -60,8 +62,8 @@ class Listener(stomp.ConnectionListener):
         logging.info(f'received a message: {frame.body}')
         try:
             self.mailer.send(event.from_string(frame.body))
-        except Exception as err:
-            logging.error(err)
+        except Exception:
+            logging.error(traceback.format_exc())
 
 
 @click.command()

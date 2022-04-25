@@ -25,6 +25,9 @@ __pycache__
 # Testing email clients
 emaillist.txt
 
+# Testing maps
+tests/*png
+
 # Ignore coverage reports
 .coverage
 coverage.xml

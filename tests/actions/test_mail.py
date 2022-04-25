@@ -24,7 +24,7 @@ def sample() -> event.Event:
     Test reading event read from file
     """
     return event.from_file(
-        'tests/message/examples/Point_Source/1868_Hayward_M6.8_contour.xml')
+        'tests/message/examples/1946Vancouver_contour.xml')
 
 
 @patch('smtplib.SMTP.sendmail', mock_sendmail, create=True)
