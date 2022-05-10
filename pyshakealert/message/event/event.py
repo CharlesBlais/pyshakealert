@@ -11,12 +11,13 @@ in XML schema under schema/dm_message.xsd directory
 """
 from dataclasses import dataclass, field
 
-import datetime
 from typing import Optional
 
-from .core import Core
-from .contributor import Contributors
-from .gm import GroundMotion
+from .core_info import CoreInfo
+from .contributors import Contributors
+from .gm_info import GroundMotionInformation
+from .follow_up_info import FollowUpInformation
+from .fault_info import FaultInformation
 
 
 @dataclass
@@ -25,49 +26,31 @@ class Event:
         name = "event"
         nillable = True
 
-    core_info: Core
+    core_info: CoreInfo
 
-    version: int = field(
-        default=0,
-        metadata=dict(type="Attribute"))
+    version: int = field(metadata=dict(type="Attribute"))
 
-    orig_sys: str = field(
-        default='dm',
-        metadata=dict(type="Attribute"))
+    orig_sys: str = field(metadata=dict(type="Attribute"))
 
-    message_type: str = field(
-        default='new',
-        metadata=dict(type="Attribute"))
+    message_type: str = field(metadata=dict(type="Attribute"))
 
-    category: str = field(
-        default='live',
-        metadata=dict(type="Attribute"))
+    contributors: Optional[Contributors] = field(default=None)
 
-    timestamp: str = field(
-        default=datetime.datetime.now().isoformat(),
-        metadata=dict(type="Attribute"))
+    fault_info: Optional[FaultInformation] = field(default=None)
 
-    alg_vers: Optional[str] = field(
-        default=None,
-        metadata=dict(type="Attribute"))
+    gm_info: Optional[GroundMotionInformation] = field(default=None)
 
-    instance: Optional[str] = field(
-        default=None,
-        metadata=dict(type="Attribute"))
+    follow_up_info: Optional[FollowUpInformation] = field(default=None)
 
-    ref_id: str = field(
-        default='-',
-        metadata=dict(type="Attribute"))
+    category: str = field(default='live', metadata=dict(type="Attribute"))
+
+    timestamp: str = field(default='-', metadata=dict(type="Attribute"))
+
+    alg_vers: str = field(default='-', metadata=dict(type="Attribute"))
+
+    instance: str = field(default='-', metadata=dict(type="Attribute"))
+
+    ref_id: str = field(default='-', metadata=dict(type="Attribute"))
 
     ref_src: Optional[str] = field(
-        default=None,
-        metadata=dict(type="Attribute"))
-
-    contributors: Optional[Contributors] = field(
-        default=None)
-
-    gm_info: Optional[GroundMotion] = field(
-        default=None)
-
-    fault_info: Optional[object] = field(
-        default=None)
+        default='-', metadata=dict(type="Attribute"))

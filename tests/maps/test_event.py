@@ -26,15 +26,17 @@ def sample_map() -> event.Event:
         'tests/message/examples/Point_Source/1868_Hayward_M6.8_map.xml')
 
 
+@pytest.mark.enable_socket
 def test_contour(sample: event.Event):
     '''
     Test writing map
     '''
-    mapevent.generate(sample, to_filename='tests/test_contour.png')
+    mapevent.generate(sample)
 
 
+@pytest.mark.enable_socket
 def test_map(sample_map: event.Event):
     '''
     Test writing map
     '''
-    mapevent.generate(sample_map, to_filename='tests/test_map.png')
+    mapevent.generate(sample_map)

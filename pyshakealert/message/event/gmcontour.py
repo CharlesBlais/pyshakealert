@@ -9,7 +9,9 @@ from shapely.geometry import Polygon
 import pandas as pd
 import geopandas as gpd
 
-from .base import BaseFloatUnits
+from .base import BaseCentimetersSeconds, \
+    BaseCentimetersSecondsSeconds, \
+    BaseMMI
 
 
 @dataclass
@@ -48,29 +50,10 @@ possibly the event does not contain contour information')
 
 
 @dataclass
-class GroundMotionMMI(BaseFloatUnits):
-    """Event message MMI"""
-
-
-@dataclass
-class GroundMotionPGA(BaseFloatUnits):
-    units: str = field(
-        default='cm/s/s',
-        metadata=dict(type="Attribute"))
-
-
-@dataclass
-class GroundMotionPGV(BaseFloatUnits):
-    units: str = field(
-        default='cm/s',
-        metadata=dict(type="Attribute"))
-
-
-@dataclass
 class GroundMotionContour:
-    MMI: GroundMotionMMI
-    PGA: GroundMotionPGA
-    PGV: GroundMotionPGV
+    MMI: BaseMMI
+    PGA: BaseCentimetersSecondsSeconds
+    PGV: BaseCentimetersSeconds
     polygon: GroundMotionPolygon
 
 
