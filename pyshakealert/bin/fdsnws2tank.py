@@ -96,7 +96,7 @@ def main(
 ):
     """
     Query FDSN-WS for event information (or quakeml file) and \
-extract miniseed information.
+extract miniseed information to convert into tank file.
     """
     settings.fdsnws = fdsnws
     if log_level is not None:

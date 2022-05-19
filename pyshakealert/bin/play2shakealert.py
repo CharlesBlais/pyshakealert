@@ -74,10 +74,11 @@ def main(
     player = CSVPlayer(file)
 
     # set client
-    client = Client(settings.amq_host, port=settings.amq_port)
-    client.connect(
+    client = Client(
+        settings.amq_host,
         username=settings.amq_username,
         password=settings.amq_password)
+    client.connect()
 
     # play the event on the client
     player.play(client)

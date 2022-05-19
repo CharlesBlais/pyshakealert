@@ -1,6 +1,12 @@
-'''
-..  codeauthor:: Charles Blais
-'''
+"""
+Mail client
+===========
+
+Mail client for sending event message information with optional map and grids
+as body content.
+
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
+"""
 import logging
 
 from typing import List
@@ -31,6 +37,9 @@ from pyshakealert.maps.event import generate
 class Mailer(Client):
     '''
     General wrapper for emailer
+
+    :type recipients: [str]
+    :param recipients: list of email clients
     '''
     def __init__(
         self,
@@ -42,6 +51,9 @@ class Mailer(Client):
     def _event_to_subject(event: Event) -> str:
         '''
         Convert the event to a subject
+
+        :type event: :class:`pyshakealert.message.event.event.Event`
+        :param event: event information
         '''
         return f'ShakeAlert Event at {event.timestamp} from {event.instance}'
 
@@ -54,7 +66,10 @@ class Mailer(Client):
 
         From the configuration, we grab the template file and list of emails
 
-        Additional kwargs can be sent to the Jinja template using kwargs
+        :type event: :class:`pyshakealert.message.event.event.Event`
+        :param event: event information
+        :rtype: bool
+        :returns: success or not
         '''
         settings = get_app_settings()
 

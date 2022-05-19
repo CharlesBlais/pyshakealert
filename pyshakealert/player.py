@@ -31,11 +31,22 @@ class CSVPlayer:
     We also validate that the file exists.
     '''
     def __init__(self, csvfile: str):
-        self.playlist: List[PlayItem] = self._parse(csvfile)
+        '''
+        Constructor
 
-    def _parse(self, csvfile: str) -> List[PlayItem]:
+        :param str csvfile: CSV file to parse
+        '''
+        self.playlist: List[PlayItem] = CSVPlayer._parse(csvfile)
+
+    @staticmethod
+    def _parse(csvfile: str) -> List[PlayItem]:
         '''
         Parse the CSV file into the structure
+
+        :param str csvfile: CSV file to parse
+
+        :rtype: [dict]
+        :returns: return list of play items
         '''
         logging.debug(f'Reading content of {csvfile}')
         result: List[PlayItem] = []
@@ -49,12 +60,15 @@ class CSVPlayer:
                 result.append(item)
         return sorted(result, key=lambda x: x.offset, reverse=False)
 
-    def play(
-        self,
-        client: Client,
-    ):
+    def play(self, client: Client):
         '''
+        Play the content of the CSV file to the client that has already
+        initiated a connection.
+
         ..  note:: the following assumes the client is already connected
+
+        :type client: :class:`pyshakealert.message.client.Client`
+        :param client: mesage broker client
         '''
         now = time.time()
         for item in self.playlist:

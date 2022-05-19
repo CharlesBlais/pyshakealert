@@ -91,7 +91,7 @@ def main(
     Query FDSN-WS to generate channel file
 
     Note that "pattern" refers to standard FDSNWS
-    pattern to filter according to the parameter
+    pattern for station selection.
     """
     settings.fdsnws = fdsnws
     if log_level is not None:

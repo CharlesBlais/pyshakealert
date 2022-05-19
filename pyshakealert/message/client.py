@@ -3,7 +3,8 @@ Message client
 ===============
 
 ActiveMQ client that abstract the behind-the-scene message passing
-protocol.
+protocol.  We try, as much as we can, to abstract the use of STOMP
+protocol so that future message broker upgrades wont' be impacted.
 
 ..  codeauthor:: Charles Blais
 """
@@ -30,21 +31,45 @@ class Client:
         self,
         host: Union[str, List[str]],
         port: Union[int, List[int]] = 61613,
+        username: str = '',
+        password: str = '',
         keepalive: bool = False,
         heartbeats: Tuple[int, int] = (0, 0),
     ) -> None:
         """
-        Constructor that establishes the connection to the ActiveMQ broker
-
         In the case of stomp, multiple host and port can be defined.  If the
         host is an array, then the port for a single value or a list of
         same length.
+
+        .. note::
+            When used, the heart-beat header MUST contain two positive integers
+            separated by a comma. The first number represents what the sender
+            of the frame can do (outgoing heart-beats):
+
+                0 means it cannot send heart-beats
+
+            otherwise it is the smallest number of milliseconds between
+            heart-beats that it can guarantee. The second number represents
+            what the sender of the frame would like to get (incoming
+            heart-beats):
+
+                0 means it does not want to receive heart-beats
+
+            otherwise it is the desired number of milliseconds between
+            heart-beats
 
         :type host: str or list
         :param host: host to connect to
 
         :type port: int or list
         :param port: port to connect
+
+        :param str username: username cred
+        :param str password: password cred
+
+        :param bool keepalive: send keepalive signal for permanent connection
+
+        :param Tuple[int, int] heartbeats: see note
 
         :raise ValueError: bad inputs
         :raise ConnectFailedException: unable to connect
@@ -62,8 +87,11 @@ class Client:
             raise ValueError('Incompatible type sent to host and port')
 
         # Establish connection and set defaults
-        self.username: str = ''
-        self.password: str = ''
+        self.username = username
+        self.password = password
+        self.topic: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+
         logging.info(f'Initiate connection to {host_and_port}')
         self.conn = stomp.Connection(
             host_and_port,
@@ -71,34 +99,24 @@ class Client:
             keepalive=keepalive,
             heartbeats=heartbeats)
 
-    def connect(
-        self,
-        username: Optional[str] = None,
-        password: Optional[str] = None
-    ) -> None:
+    def connect(self) -> None:
         """
         Establish connection
 
-        For stomp, username and password are also required.  They are keywords
-        since certain protocols may not require credentials.
-
-        :param str username: username credentials
-        :param str password: password credentials
+        .. note::
+            For stomp, username and password are also required.  They are
+            keywords since certain protocols may not require credentials.
 
         :raise MissingCredentialsException: failed to provide username
             and password
         :raise ConnectFailedException: failed to connect
         """
-        if username is None or password is None:
+        if self.username == '' or self.password == '':
             raise MissingCredentialsException('username and password \
 must be set for stomp')
 
-        # save information
-        self.username = username
-        self.password = password
-
         try:
-            logging.info("Connection to broker with user %s", self.username)
+            logging.info(f"Connection to broker with user {self.username}")
             self.conn.connect(self.username, self.password, wait=True)
         except stomp.exception.ConnectFailedException as err:
             raise ConnectFailedException(err)
@@ -124,7 +142,9 @@ must be set for stomp')
 
         If the subscription_id is not set, we use the username as the default.
 
-        ..  note:: This routine is non-blocking
+        ..  note::
+            This routine is non-blocking.  Although we exit the routine, the
+            thread is still running until the object is destroyed
 
         :param str topic: ActiveMQ topic to subcribe too
         :param str subscription_id: connection id (use username by default)
@@ -145,10 +165,26 @@ username {self.username}')
         if listener is not None:
             logging.info(f'Adding custom message listener {listener}')
             self.conn.set_listener('', listener)
-        logging.info(f'Subscribing to topic {topic}')
-        self.conn.subscribe(topic, subscription_id)
-        # although we exit the routine, the thread is still running until
-        # the object is destroyed
+
+        # save information
+        self.topic = topic
+        self.subscription_id = subscription_id
+
+        logging.info(f'Subscribing to topic {self.topic}')
+        self.conn.subscribe(self.topic, self.subscription_id)
+
+    def reconnect(self):
+        '''
+        Use saved information to re-establish our connection
+        '''
+        if self.conn.is_connected():
+            logging.info('Client is already connected')
+            return None
+
+        # restart connection
+        self.connect()
+        logging.info(f'Re-subscribing to topic {self.topic}')
+        self.conn.subscribe(self.topic, self.subscription_id)
 
     def send(
         self,
@@ -187,9 +223,9 @@ listen, use connect')
         if message_type is not None:
             headers['type'] = message_type
 
-        headers['expires'] = "%d" % int(
-                (datetime.datetime.now()
-                    + datetime.timedelta(seconds=expires)).timestamp()*1000)
+        headers['expires'] = "%d" % int((
+            datetime.datetime.now() + datetime.timedelta(seconds=expires)
+        ).timestamp()*1000)
 
         logging.info(f'Sending message to broker topic {topic} \
 with header: {headers}')

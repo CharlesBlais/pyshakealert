@@ -45,8 +45,10 @@ def write(
 
     :type filename: str or resource
     :param filename: file to write to
+
     :type inventory: :class:`obspy.core.inventory.Inventory`
     :param inventory: list of channel
+
     :param str user: user name signature (optional)
     """
     settings = get_app_settings()

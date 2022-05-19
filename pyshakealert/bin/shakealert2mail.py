@@ -49,8 +49,9 @@ class Listener(stomp.ConnectionListener):
     '''
     ActiveMQ listener to convert and send to NPAS
     '''
-    def __init__(self, mailer: Mailer):
+    def __init__(self, mailer: Mailer, client: Client):
         self.mailer = mailer
+        self.client = client
         self.running = True
 
     def on_error(self, frame):
@@ -64,6 +65,10 @@ class Listener(stomp.ConnectionListener):
             self.mailer.send(event.from_string(frame.body))
         except Exception:
             logging.error(traceback.format_exc())
+
+    def on_disconnected(self):
+        logging.warning('Loss connection')
+        self.client.reconnect()
 
 
 @click.command()
@@ -144,19 +149,22 @@ def main(
 
     logging.info(f'Registering emails: {emails}')
 
+    client = Client(
+        settings.amq_host,
+        port=settings.amq_port,
+        username=settings.amq_username,
+        password=settings.amq_password,
+        keepalive=True,
+        heartbeats=(4000, 4000))
     # Create the mail client listener
-    listener = Listener(mailer=Mailer(recipients=emails))
+    listener = Listener(
+        mailer=Mailer(recipients=emails),
+        client=client,
+    )
+    client.connect()
+    client.listen(topic, listener=listener)
 
     # set signal handlers for stoping listener
-    client = Client(settings.amq_host, port=settings.amq_port)
-    client.connect(
-        username=settings.amq_username,
-        password=settings.amq_password)
-    client.listen(
-        topic,
-        listener=listener
-    )
-
     killer = GracefulKiller()
     while not killer.kill_now and listener.running:
         time.sleep(1)

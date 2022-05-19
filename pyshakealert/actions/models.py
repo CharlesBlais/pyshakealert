@@ -1,4 +1,9 @@
 '''
+Models
+======
+
+Model information
+
 ..  codeauthor:: Charles Blais
 '''
 from pyshakealert.message.event.event import Event

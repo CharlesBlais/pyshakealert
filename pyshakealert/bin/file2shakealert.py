@@ -103,10 +103,12 @@ def main(
         body = open(file, 'r').read()
 
     # set signal handlers for stoping listener
-    client = Client(settings.amq_host, port=settings.amq_port)
-    client.connect(
+    client = Client(
+        settings.amq_host,
+        port=settings.amq_port,
         username=settings.amq_username,
         password=settings.amq_password)
+    client.connect()
     client.send(
         topic=topic,
         body=body,

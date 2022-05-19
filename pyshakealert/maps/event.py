@@ -1,4 +1,9 @@
 '''
+Maps
+====
+
+Maps for represent event information
+
 ..  codeauthor:: Charles Blais
 '''
 import logging
@@ -27,6 +32,10 @@ import io
 def _mmi_to_color(mmi: float) -> str:
     '''
     Convert mmi to color
+
+    :param float mmi: MMI value to color scale
+    :rtype: str
+    :returns: MMI color string
     '''
     settings = get_app_settings()
 
@@ -39,9 +48,17 @@ def _mmi_to_color(mmi: float) -> str:
 def _add_ground_motion(
     ax: plt.Axes,
     gm: Union[GroundMotionContourPrediction, GroundMotionMapPrediction],
-):
+) -> None:
     '''
     Add ground motion to image
+
+    :type ax: :class:`matplotlib.Axes`
+    :param ax: maplotlib axes
+
+    :type gm:
+        :class:`pyshakealert.message.event.gmcontour.GroundMotionContourPrediction`
+        :class:`pyshakealert.message.event.gmmap.GroundMotionMapPrediction`
+    :param gm: ground motion contour or map
     '''
     data_crs = ccrs.PlateCarree()
 
@@ -89,6 +106,17 @@ def generate(
 ) -> bytes:
     '''
     Generate map image from event object
+
+    :type event: :class:`pyshakealert.message.event.event.Event`
+    :param event: event object to create map
+
+    :param float dlat: padding latitude from origin
+    :param float dlon: padding longitude from origin
+    :param int zoom: OSM zoom level
+    :param Optional[str] to_filename: save to file
+
+    :rtype: bytes
+    :returns: PNG image in bytes
     '''
     data_crs = ccrs.PlateCarree()
 

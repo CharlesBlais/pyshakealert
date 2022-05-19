@@ -13,20 +13,24 @@ from pyshakealert.config import get_app_settings
 @pytest.fixture
 def client_dm() -> Client:
     settings = get_app_settings()
-    client = Client(settings.amq_host, port=61613)
-    client.connect(
+    client = Client(
+        settings.amq_host,
+        port=61613,
         username=settings.amq_username,
         password=settings.amq_password)
+    client.connect()
     return client
 
 
 @pytest.fixture
 def client_sa() -> Client:
     settings = get_app_settings()
-    client = Client(settings.amq_host, port=62613)
-    client.connect(
+    client = Client(
+        settings.amq_host,
+        port=62613,
         username=settings.amq_username,
         password=settings.amq_password)
+    client.connect()
     return client
 
 
