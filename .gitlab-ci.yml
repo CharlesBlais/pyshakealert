@@ -24,7 +24,8 @@ variables:
 cache:
   paths:
     - .cache/pip
-    - venv/
+    - .conda
+    - /opt/conda
 
 # Initialize template for standard image building
 # We need to add locale support for french and english
