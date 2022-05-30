@@ -55,6 +55,7 @@ To simplify the build and testing of the ShakeAlert project, we recommend you al
 First, build the container
 
 ```bash
+cd [root of this project]
 # from the root of this porject
 # build the container with tag nrcan/pyshakealert
 docker build -t nrcan/pyshakealert .
