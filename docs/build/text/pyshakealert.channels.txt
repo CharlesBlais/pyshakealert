@@ -1,0 +1,66 @@
+pyshakealert.channels package
+*****************************
+
+
+Submodules
+==========
+
+
+pyshakealert.channels.file module
+=================================
+
+
+Channel file library
+--------------------
+
+Library for creating channel file using FDSN-WS response.  The channel
+file supports any seismic channels.  The mandatory information present
+in the response must be:
+
+   * network code
+
+   * station code
+
+   * location code
+
+   * channel code
+
+   * latitude
+
+   * longitude
+
+   * elevation
+
+   * sample_rate (Hz)
+
+   * gain
+
+   * units
+
+   * ground motion clip
+
+   * channel azimuth
+
+   * channel dip
+
+   * channel description
+
+It is currently unknown if the channel description is a mandatory
+field.
+
+pyshakealert.channels.file.write(filename: Union[str, TextIO], inventory: Inventory, user: Optional[str] = None) -> None
+
+   Using a obspy inventory object (with response level information) we
+   use the Jinja2 template the create the file.
+
+   Parameters:
+      * **filename** (*str** or **resource*) -- file to write to
+
+      * **inventory** ("obspy.core.inventory.Inventory") -- list of
+        channel
+
+      * **user** (*str*) -- user name signature (optional)
+
+
+Module contents
+===============

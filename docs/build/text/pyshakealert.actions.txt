@@ -1,0 +1,63 @@
+pyshakealert.actions package
+****************************
+
+
+Submodules
+==========
+
+
+pyshakealert.actions.mail module
+================================
+
+
+Mail client
+-----------
+
+Mail client for sending event message information with optional map
+and grids as body content.
+
+class pyshakealert.actions.mail.Mailer(recipients: List[str] = [])
+
+   Bases: "Client"
+
+   General wrapper for emailer
+
+   Parameters:
+      **recipients** (*[**str**]*) -- list of email clients
+
+   send(event: Event) -> bool
+
+      At this stage, we have usually determined we can send an email
+
+      From the configuration, we grab the template file and list of
+      emails
+
+      Parameters:
+         **event** ("pyshakealert.message.event.event.Event") -- event
+         information
+
+      Return type:
+         bool
+
+      Returns:
+         success or not
+
+
+pyshakealert.actions.models module
+==================================
+
+
+Models
+------
+
+Model information
+
+class pyshakealert.actions.models.Client
+
+   Bases: "object"
+
+   send(event: Event) -> bool
+
+
+Module contents
+===============

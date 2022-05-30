@@ -1,0 +1,61 @@
+pyshakealert.tankplayer package
+*******************************
+
+
+Submodules
+==========
+
+
+pyshakealert.tankplayer.tankfile module
+=======================================
+
+
+Tankfile generator
+------------------
+
+class pyshakealert.tankplayer.tankfile.TankGenerator(fdsnws: str = 'http://fdsn.seismo.nrcan.gc.ca', timeout: int = 10)
+
+   Bases: "object"
+
+   Using an FDSNWS client, we generate a file based on teh catalogue
+   object or a and event found in the FDSNWS.
+
+   Routines grab the pick in the event and pad the result
+
+   Parameters:
+      * **fdsnws** (*str*) -- fdsn client url
+
+      * **application** (*str*) -- application for ms2tank
+
+      * **timeout** (*int*) -- timeout for calling applications
+
+   from_event(event: Event, radius: Optional[float] = None, pad_before: float = 60, pad_after: float = 600, buffer_size: float = 1, force_starttime: Optional[Union[datetime, UTCDateTime]] = None) -> bytes
+
+      Convert and obspy event to tankfile
+
+   from_eventid(eventid: str, **kwargs) -> bytes
+
+      Query the FDSNWS from an eventid and extract all picks
+
+      Parameters:
+         **eventid** (*str*) -- event id
+
+pyshakealert.tankplayer.tankfile.from_mseed_file(filename: str, app: str = '/app/eewdata/ew/bin/ms2tank', timeout: int = 10) -> bytes
+
+   Convert miniseed file to tank file using application
+
+pyshakealert.tankplayer.tankfile.from_stream(stream: Stream, **kwargs) -> bytes
+
+   Convert stream to tank file
+
+   See:
+      from_mseed_file
+
+pyshakealert.tankplayer.tankfile.split_stream(stream: Stream, buffer_size: float) -> Stream
+
+   Split stream traces by the buffer size and sort all of them by the
+   starttime
+
+
+Module contents
+===============

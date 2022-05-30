@@ -1,0 +1,142 @@
+pyshakealert.message.clients package
+************************************
+
+
+Submodules
+==========
+
+
+pyshakealert.message.clients.mqtt module
+========================================
+
+
+Message client
+--------------
+
+ActiveMQ client that abstract the behind-the-scene message passing
+protocol.  We try, as much as we can, to abstract the use of MQTT
+protocol so that future message broker upgrades wont' be impacted.
+
+class pyshakealert.message.clients.mqtt.Client(host: str = 'localhost', port: int = 1883, username: Optional[str] = None, password: Optional[str] = None, reconnect: int = 0, keepalive: int = 60)
+
+   Bases: "object"
+
+   Client wrapper for stomp protocol used by ActiveMQ client
+
+   disconnect() -> None
+
+      Disconnect from the connection
+
+   publish(topic: str, body: Union[str, bytes]) -> None
+
+      Send a message to the ActiveMQ broker
+
+      It is assumed that all message are in UTF-8
+
+      Parameters:
+         * **topic** (*str*) -- topic to sent to
+
+         * **body** (*str*) -- body content
+
+   subscribe(topic: str, on_message: ~typing.Callable[[str, str], None] = <function default_on_message>) -> None
+
+      Subcribe to the topic sent and listen for messages
+
+      A default listenery is set using MyDefaultListener which just
+      outputs the content of the message to stdout.  The listener must
+      follow the same template.
+
+      Note:
+
+        This routine is blocking.  Although we exit the routine, the
+        thread is still running until the object is destroyed
+
+      Parameters:
+         * **topic** (*str*) -- ActiveMQ topic to subcribe too
+
+         * **on_message** (*callable*) -- on message hanlder with
+           topic, payload as arg
+
+pyshakealert.message.clients.mqtt.default_on_message(topic: str, payload: str)
+
+
+pyshakealert.message.clients.stomp module
+=========================================
+
+
+Message client
+--------------
+
+ActiveMQ client that abstract the behind-the-scene message passing
+protocol.  We try, as much as we can, to abstract the use of STOMP
+protocol so that future message broker upgrades wont' be impacted.
+
+class pyshakealert.message.clients.stomp.Client(host: Union[str, List[str]], port: Union[int, List[int]] = 61613, username: str = '', password: str = '', keepalive: bool = True, heartbeats: Tuple[int, int] = (0, 0))
+
+   Bases: "object"
+
+   Client wrapper for stomp protocol used by ActiveMQ client
+
+   disconnect() -> None
+
+      Disconnect from the connection
+
+   publish(topic: str, body: Union[str, bytes], content_type: str = 'application/xml', expires: float = 600, message_type: Optional[str] = None, message_id: int = 1) -> None
+
+      Send a message to the ActiveMQ broker
+
+      It is assumed that all message are in UTF-8
+
+      Parameters:
+         * **topic** (*str*) -- topic to sent to
+
+         * **body** (*str*) -- body content
+
+         * **content_type** (*str*) -- optional header for content-
+           type
+
+         * **expires** ("datetime.datetime" or "datetime.timedelta")
+           -- time the message should expire
+
+         * **message_type** -- adds custom ShakeAlert type header to
+           the message
+
+         * **message_id** -- adds custom ShakeAlert sequence ID to the
+           message
+
+      Raises:
+         **ConnectFailedException** -- connection not initiated
+
+   subscribe(topic: str, subscription_id: ~typing.Optional[str] = None, on_message: ~typing.Callable[[str, str], None] = <function default_on_message>) -> None
+
+      Subcribe to the topic sent and listen for messages
+
+      A default listenery is set using MyDefaultListener which just
+      outputs the content of the message to stdout.  The listener must
+      follow the same template.
+
+      If the subscription_id is not set, we use the host as the
+      default.
+
+      Note:
+
+        This routine is non-blocking.  Although we exit the routine,
+        the thread is still running until the object is destroyed
+
+      Parameters:
+         * **topic** (*str*) -- ActiveMQ topic to subcribe too
+
+         * **subscription_id** (*str*) -- connection id (use username
+           by default)
+
+         * **listener** (*object*) -- add custom listener according to
+           stomp.py doc
+
+      Raises:
+         **ConnectFailedException** -- connection not initiated
+
+pyshakealert.message.clients.stomp.default_on_message(topic: str, payload: str)
+
+
+Module contents
+===============

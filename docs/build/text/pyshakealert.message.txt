@@ -1,0 +1,86 @@
+pyshakealert.message package
+****************************
+
+
+Subpackages
+===========
+
+* pyshakealert.message.clients package
+
+  * Submodules
+
+  * pyshakealert.message.clients.mqtt module
+
+    * Message client
+
+  * pyshakealert.message.clients.stomp module
+
+    * Message client
+
+  * Module contents
+
+* pyshakealert.message.event package
+
+  * Submodules
+
+  * pyshakealert.message.event.base module
+
+  * pyshakealert.message.event.contributors module
+
+  * pyshakealert.message.event.core_info module
+
+  * pyshakealert.message.event.event module
+
+    * ShakeAlert Event
+
+  * pyshakealert.message.event.fault_info module
+
+  * pyshakealert.message.event.follow_up_info module
+
+  * pyshakealert.message.event.gm_info module
+
+  * pyshakealert.message.event.gmcontour module
+
+  * pyshakealert.message.event.gmmap module
+
+  * pyshakealert.message.event.gmpoint module
+
+  * Module contents
+
+
+Submodules
+==========
+
+
+pyshakealert.message.validate module
+====================================
+
+
+XML Event Validator
+-------------------
+
+pyshakealert.message.validate.is_decision_module(content: bytes) -> bool
+
+   Validate using schema for DM
+
+   Parameters:
+      * **content** (*bytes*) -- XML message
+
+      * **schema** (*str*) -- schema file
+
+   Return type:
+      bool
+
+pyshakealert.message.validate.is_xml(content: bytes) -> bool
+
+   Is it an XML message
+
+   Parameters:
+      **content** (*bytes*) -- XML message
+
+   Return type:
+      bool
+
+
+Module contents
+===============

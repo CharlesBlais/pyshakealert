@@ -1,0 +1,42 @@
+pyshakealert.maps package
+*************************
+
+
+Submodules
+==========
+
+
+pyshakealert.maps.event module
+==============================
+
+
+Maps
+----
+
+Maps for represent event information
+
+pyshakealert.maps.event.generate(event: Event, dlat: float = 1, dlon: float = 2, zoom: int = 8, to_filename: Optional[str] = None) -> bytes
+
+   Generate map image from event object
+
+   Parameters:
+      * **event** ("pyshakealert.message.event.event.Event") -- event
+        object to create map
+
+      * **dlat** (*float*) -- padding latitude from origin
+
+      * **dlon** (*float*) -- padding longitude from origin
+
+      * **zoom** (*int*) -- OSM zoom level
+
+      * **to_filename** (*Optional**[**str**]*) -- save to file
+
+   Return type:
+      bytes
+
+   Returns:
+      PNG image in bytes
+
+
+Module contents
+===============

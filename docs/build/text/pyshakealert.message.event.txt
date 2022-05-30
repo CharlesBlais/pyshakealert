@@ -1,0 +1,619 @@
+pyshakealert.message.event package
+**********************************
+
+
+Submodules
+==========
+
+
+pyshakealert.message.event.base module
+======================================
+
+class pyshakealert.message.event.base.BaseCentimeters(value: float, units: str = 'cm')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'cm'
+
+class pyshakealert.message.event.base.BaseCentimetersSeconds(value: float, units: str = 'cm/s')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'cm/s'
+
+class pyshakealert.message.event.base.BaseCentimetersSecondsSeconds(value: float, units: str = 'cm/s/s')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'cm/s/s'
+
+class pyshakealert.message.event.base.BaseDatetime(value: str, units: str = 'UTC')
+
+   Bases: "BaseStringUnits"
+
+   units: str = 'UTC'
+
+class pyshakealert.message.event.base.BaseDegrees(value: float, units: str = 'deg')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'deg'
+
+class pyshakealert.message.event.base.BaseFloatUnits(value: float, units: str = '')
+
+   Bases: "object"
+
+   units: str = ''
+
+   value: float
+
+class pyshakealert.message.event.base.BaseG(value: float, units: str = 'g')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'g'
+
+class pyshakealert.message.event.base.BaseKilometers(value: float, units: str = 'km')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'km'
+
+class pyshakealert.message.event.base.BaseMMI(value: float, units: str = '')
+
+   Bases: "BaseFloatUnits"
+
+   value: float
+
+class pyshakealert.message.event.base.BaseMagnitude(value: float, units: str = 'Mw')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'Mw'
+
+class pyshakealert.message.event.base.BaseMeters(value: float, units: str = 'm')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'm'
+
+class pyshakealert.message.event.base.BaseSeconds(value: float, units: str = 'sec')
+
+   Bases: "BaseFloatUnits"
+
+   units: str = 'sec'
+
+class pyshakealert.message.event.base.BaseStringUnits(value: str, units: str = '')
+
+   Bases: "object"
+
+   units: str = ''
+
+   value: str
+
+
+pyshakealert.message.event.contributors module
+==============================================
+
+class pyshakealert.message.event.contributors.Contributor(alg_instance: str, alg_name: str, alg_version: str, category: str, event_id: str, version: int)
+
+   Bases: "object"
+
+   alg_instance: str
+
+   alg_name: str
+
+   alg_version: str
+
+   category: str
+
+   event_id: str
+
+   version: int
+
+class pyshakealert.message.event.contributors.Contributors(contributor:List[pyshakealert.message.event.contributors.Contributor]=<factory>)
+
+   Bases: "object"
+
+   contributor: List[Contributor]
+
+
+pyshakealert.message.event.core_info module
+===========================================
+
+class pyshakealert.message.event.core_info.CoreInfo(mag: pyshakealert.message.event.base.BaseMagnitude, mag_uncer: pyshakealert.message.event.base.BaseMagnitude, lat: pyshakealert.message.event.base.BaseDegrees, lat_uncer: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, lon_uncer: pyshakealert.message.event.base.BaseDegrees, depth: pyshakealert.message.event.base.BaseKilometers, depth_uncer: pyshakealert.message.event.base.BaseKilometers, orig_time: pyshakealert.message.event.base.BaseDatetime, orig_time_uncer: pyshakealert.message.event.base.BaseSeconds, likelihood: float, id: str, num_stations: Union[int, NoneType] = None)
+
+   Bases: "object"
+
+   depth: BaseKilometers
+
+   depth_uncer: BaseKilometers
+
+   id: str
+
+   lat: BaseDegrees
+
+   lat_uncer: BaseDegrees
+
+   likelihood: float
+
+   lon: BaseDegrees
+
+   lon_uncer: BaseDegrees
+
+   mag: BaseMagnitude
+
+   mag_uncer: BaseMagnitude
+
+   num_stations: Optional[int] = None
+
+   orig_time: BaseDatetime
+
+   orig_time_uncer: BaseSeconds
+
+
+pyshakealert.message.event.event module
+=======================================
+
+
+ShakeAlert Event
+----------------
+
+Object for handling ShakeAlert Event as described in XML schema under
+schema/dm_message.xsd directory
+
+Note:
+
+  we know its validate before assignment
+
+class pyshakealert.message.event.event.Event(core_info: pyshakealert.message.event.core_info.CoreInfo, version: int, orig_sys: str, message_type: str, contributors: Union[pyshakealert.message.event.contributors.Contributors, NoneType] = None, fault_info: Union[pyshakealert.message.event.fault_info.FaultInformation, NoneType] = None, gm_info: Union[pyshakealert.message.event.gm_info.GroundMotionInformation, NoneType] = None, follow_up_info: Union[pyshakealert.message.event.follow_up_info.FollowUpInformation, NoneType] = None, category: str = 'live', timestamp: str = '-', alg_vers: str = '-', instance: str = '-', ref_id: str = '-', ref_src: Union[str, NoneType] = '-')
+
+   Bases: "object"
+
+   class Meta
+
+      Bases: "object"
+
+      name = 'event'
+
+      nillable = True
+
+   alg_vers: str = '-'
+
+   category: str = 'live'
+
+   contributors: Optional[Contributors] = None
+
+   core_info: CoreInfo
+
+   fault_info: Optional[FaultInformation] = None
+
+   follow_up_info: Optional[FollowUpInformation] = None
+
+   gm_info: Optional[GroundMotionInformation] = None
+
+   instance: str = '-'
+
+   message_type: str
+
+   orig_sys: str
+
+   ref_id: str = '-'
+
+   ref_src: Optional[str] = '-'
+
+   timestamp: str = '-'
+
+   version: int
+
+
+pyshakealert.message.event.fault_info module
+============================================
+
+class pyshakealert.message.event.fault_info.FaultDescription(segment: List[pyshakealert.message.event.fault_info.SegmentInformation], atten_geom: bool, segment_number: int, segment_shape: str, confidence: Union[float, NoneType] = None, global_uncertainty: Union[pyshakealert.message.event.fault_info.UncertaintyInformation, NoneType] = None)
+
+   Bases: "object"
+
+   atten_geom: bool
+
+   confidence: Optional[float] = None
+
+   global_uncertainty: Optional[UncertaintyInformation] = None
+
+   segment: List[SegmentInformation]
+
+   segment_number: int
+
+   segment_shape: str
+
+class pyshakealert.message.event.fault_info.FaultInformation(finite_fault: pyshakealert.message.event.fault_info.FaultDescription)
+
+   Bases: "object"
+
+   finite_fault: FaultDescription
+
+class pyshakealert.message.event.fault_info.SegmentInformation(vertices: pyshakealert.message.event.fault_info.Vertices, slip: Union[pyshakealert.message.event.fault_info.Slip, NoneType] = None)
+
+   Bases: "object"
+
+   slip: Optional[Slip] = None
+
+   vertices: Vertices
+
+class pyshakealert.message.event.fault_info.Slip(ss: Union[pyshakealert.message.event.base.BaseMeters, NoneType] = None, ss_uncer: Union[pyshakealert.message.event.base.BaseMeters, NoneType] = None, ds: Union[pyshakealert.message.event.base.BaseMeters, NoneType] = None, ds_uncer: Union[pyshakealert.message.event.base.BaseMeters, NoneType] = None)
+
+   Bases: "object"
+
+   ds: Optional[BaseMeters] = None
+
+   ds_uncer: Optional[BaseMeters] = None
+
+   ss: Optional[BaseMeters] = None
+
+   ss_uncer: Optional[BaseMeters] = None
+
+class pyshakealert.message.event.fault_info.UncertaintyInformation(lon_trans: Union[pyshakealert.message.event.base.BaseDegrees, NoneType] = None, lat_trans: Union[pyshakealert.message.event.base.BaseDegrees, NoneType] = None, total_len: Union[pyshakealert.message.event.base.BaseKilometers, NoneType] = None, strike: Union[pyshakealert.message.event.base.BaseDegrees, NoneType] = None, dip: Union[pyshakealert.message.event.base.BaseDegrees, NoneType] = None)
+
+   Bases: "object"
+
+   dip: Optional[BaseDegrees] = None
+
+   lat_trans: Optional[BaseDegrees] = None
+
+   lon_trans: Optional[BaseDegrees] = None
+
+   strike: Optional[BaseDegrees] = None
+
+   total_len: Optional[BaseKilometers] = None
+
+class pyshakealert.message.event.fault_info.Vertex(lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, depth: pyshakealert.message.event.base.BaseKilometers)
+
+   Bases: "object"
+
+   depth: BaseKilometers
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+class pyshakealert.message.event.fault_info.Vertices(vertex: List[pyshakealert.message.event.fault_info.Vertex])
+
+   Bases: "object"
+
+   vertex: List[Vertex]
+
+
+pyshakealert.message.event.follow_up_info module
+================================================
+
+class pyshakealert.message.event.follow_up_info.FollowUpInformation(message_text: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   message_text: Optional[str] = None
+
+
+pyshakealert.message.event.gm_info module
+=========================================
+
+class pyshakealert.message.event.gm_info.GroundMotionInformation(gmpoint_obs: Union[pyshakealert.message.event.gmpoint.GroundMotionPoint, NoneType] = None, gmpoint_pred: Union[pyshakealert.message.event.gmpoint.GroundMotionPoint, NoneType] = None, gmcontour_pred: Union[pyshakealert.message.event.gmcontour.GroundMotionContourPrediction, NoneType] = None, gmmap_pred: Union[pyshakealert.message.event.gmmap.GroundMotionMapPrediction, NoneType] = None)
+
+   Bases: "object"
+
+   gmcontour_pred: Optional[GroundMotionContourPrediction] = None
+
+   gmmap_pred: Optional[GroundMotionMapPrediction] = None
+
+   gmpoint_obs: Optional[GroundMotionPoint] = None
+
+   gmpoint_pred: Optional[GroundMotionPoint] = None
+
+
+pyshakealert.message.event.gmcontour module
+===========================================
+
+class pyshakealert.message.event.gmcontour.GroundMotionContour(MMI: pyshakealert.message.event.base.BaseMMI, PGA: pyshakealert.message.event.base.BaseCentimetersSecondsSeconds, PGV: pyshakealert.message.event.base.BaseCentimetersSeconds, polygon: pyshakealert.message.event.gmcontour.GroundMotionPolygon)
+
+   Bases: "object"
+
+   MMI: BaseMMI
+
+   PGA: BaseCentimetersSecondsSeconds
+
+   PGV: BaseCentimetersSeconds
+
+   polygon: GroundMotionPolygon
+
+class pyshakealert.message.event.gmcontour.GroundMotionContourPrediction(number:int=0, contour:List[pyshakealert.message.event.gmcontour.GroundMotionContour]=<factory>)
+
+   Bases: "object"
+
+   contour: List[GroundMotionContour]
+
+   number: int = 0
+
+   to_dataframe()
+
+      Convert the list of contours to dataframe
+
+      The index of the dataframe is the Polygon shape of the contour.
+
+      Note:
+
+        The geopandas library is only loaded on request to increase
+        performance of the library.
+
+      Return type:
+         "geopandas.GeoDataFrame"
+
+class pyshakealert.message.event.gmcontour.GroundMotionPolygon(value: str, number: int)
+
+   Bases: "object"
+
+   property coordinates: List
+
+      Get coordinates of polygon
+
+      For simplicity of converation from and to xmltodict structure,
+      we store the information of the polygons as string and convert
+      them on request only.
+
+   number: int
+
+   to_shapely()
+
+      Convert object to shapely
+
+      Convert the list of coordinates to a shapely Polygon object. For
+      faster processing, we only load the shapely library if its
+      request.  We don't check that the return response is a Shapely
+      object for simplicity.
+
+      Return type:
+         "shapely.geometry.Polygon"
+
+   value: str
+
+
+pyshakealert.message.event.gmmap module
+=======================================
+
+class pyshakealert.message.event.gmmap.GroundMotionGridField(index: int, name: str, units: str = '')
+
+   Bases: "object"
+
+   index: int
+
+   name: str
+
+   units: str = ''
+
+class pyshakealert.message.event.gmmap.GroundMotionMapPrediction(number:int=0, grid_field:List[pyshakealert.message.event.gmmap.GroundMotionGridField]=<factory>, grid_data:str='')
+
+   Bases: "object"
+
+   property grid: List[List[float]]
+
+      Get values of the grid
+
+      For simplicity of converation from and to xmltodict structure,
+      we store the information of the polygons as string and convert
+      them on request only.
+
+   grid_data: str = ''
+
+   grid_field: List[GroundMotionGridField]
+
+   number: int = 0
+
+   to_dataframe()
+
+      Convert the grid to dataframe
+
+      The index of the dataframe is the Point shape in the grid.
+
+      Note:
+
+        The geopandas library is only loaded on request to increase
+        performance of the library.
+
+      Return type:
+         "geopandas.GeoDataFrame"
+
+
+pyshakealert.message.event.gmpoint module
+=========================================
+
+class pyshakealert.message.event.gmpoint.AccelerationObservation(obs:List[pyshakealert.message.event.gmpoint.AccelerationObservationPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   obs: List[AccelerationObservationPoint]
+
+class pyshakealert.message.event.gmpoint.AccelerationObservationPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimetersSecondsSeconds, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   value: BaseCentimetersSecondsSeconds
+
+class pyshakealert.message.event.gmpoint.AccelerationPrediction(pred:List[pyshakealert.message.event.gmpoint.AccelerationPredictionPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   pred: List[AccelerationPredictionPoint]
+
+class pyshakealert.message.event.gmpoint.AccelerationPredictionPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimetersSecondsSeconds, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, value_uncer: pyshakealert.message.event.base.BaseCentimetersSeconds, app_rad: pyshakealert.message.event.base.BaseKilometers, time_uncer: pyshakealert.message.event.base.BaseSeconds, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   app_rad: BaseKilometers
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   time_uncer: BaseSeconds
+
+   value: BaseCentimetersSecondsSeconds
+
+   value_uncer: BaseCentimetersSeconds
+
+class pyshakealert.message.event.gmpoint.DisplacementObservation(obs:List[pyshakealert.message.event.gmpoint.DisplacementObservationPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   obs: List[DisplacementObservationPoint]
+
+class pyshakealert.message.event.gmpoint.DisplacementObservationPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimeters, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   value: BaseCentimeters
+
+class pyshakealert.message.event.gmpoint.DisplacementPrediction(pred:List[pyshakealert.message.event.gmpoint.DisplacementPredictionPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   pred: List[DisplacementPredictionPoint]
+
+class pyshakealert.message.event.gmpoint.DisplacementPredictionPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimeters, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, value_uncer: pyshakealert.message.event.base.BaseCentimetersSeconds, app_rad: pyshakealert.message.event.base.BaseKilometers, time_uncer: pyshakealert.message.event.base.BaseSeconds, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   app_rad: BaseKilometers
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   time_uncer: BaseSeconds
+
+   value: BaseCentimeters
+
+   value_uncer: BaseCentimetersSeconds
+
+class pyshakealert.message.event.gmpoint.GroundMotionPoint(pgd_obs: Union[pyshakealert.message.event.gmpoint.DisplacementObservation, NoneType] = None, pgv_obs: Union[pyshakealert.message.event.gmpoint.VelocityObservation, NoneType] = None, pga_obs: Union[pyshakealert.message.event.gmpoint.AccelerationObservation, NoneType] = None, pgd_pred: Union[pyshakealert.message.event.gmpoint.DisplacementPrediction, NoneType] = None, pgv_pred: Union[pyshakealert.message.event.gmpoint.VelocityPrediction, NoneType] = None, pga_pred: Union[pyshakealert.message.event.gmpoint.AccelerationPrediction, NoneType] = None)
+
+   Bases: "object"
+
+   pga_obs: Optional[AccelerationObservation] = None
+
+   pga_pred: Optional[AccelerationPrediction] = None
+
+   pgd_obs: Optional[DisplacementObservation] = None
+
+   pgd_pred: Optional[DisplacementPrediction] = None
+
+   pgv_obs: Optional[VelocityObservation] = None
+
+   pgv_pred: Optional[VelocityPrediction] = None
+
+class pyshakealert.message.event.gmpoint.VelocityObservation(obs:List[pyshakealert.message.event.gmpoint.VelocityObservationPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   obs: List[VelocityObservationPoint]
+
+class pyshakealert.message.event.gmpoint.VelocityObservationPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimetersSeconds, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   value: BaseCentimetersSeconds
+
+class pyshakealert.message.event.gmpoint.VelocityPrediction(pred:List[pyshakealert.message.event.gmpoint.VelocityPredictionPoint]=<factory>, number:Union[int, NoneType]=None)
+
+   Bases: "object"
+
+   number: Optional[int] = None
+
+   pred: List[VelocityPredictionPoint]
+
+class pyshakealert.message.event.gmpoint.VelocityPredictionPoint(SNCL: str, value: pyshakealert.message.event.base.BaseCentimetersSeconds, lat: pyshakealert.message.event.base.BaseDegrees, lon: pyshakealert.message.event.base.BaseDegrees, time: pyshakealert.message.event.base.BaseDatetime, value_uncer: pyshakealert.message.event.base.BaseCentimetersSeconds, app_rad: pyshakealert.message.event.base.BaseKilometers, time_uncer: pyshakealert.message.event.base.BaseSeconds, orig_sys: Union[str, NoneType] = None)
+
+   Bases: "object"
+
+   SNCL: str
+
+   app_rad: BaseKilometers
+
+   lat: BaseDegrees
+
+   lon: BaseDegrees
+
+   orig_sys: Optional[str] = None
+
+   time: BaseDatetime
+
+   time_uncer: BaseSeconds
+
+   value: BaseCentimetersSeconds
+
+   value_uncer: BaseCentimetersSeconds
+
+
+Module contents
+===============
+
+pyshakealert.message.event.from_file(filename: str) -> Event
+
+   Parse content from file which should be an event_message
+
+pyshakealert.message.event.from_string(content: str) -> Event
+
+   Parse from string.  String should be an event_message
+
+pyshakealert.message.event.to_string(event: Event) -> str
+
+   Convert an event to string object

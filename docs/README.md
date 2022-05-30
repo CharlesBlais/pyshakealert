@@ -2,4 +2,4 @@
 
 sphinx-quickstart
 sphinx-apidoc -o source/ ../pyshakealert
-make html
+make text

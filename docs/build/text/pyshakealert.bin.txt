@@ -1,0 +1,60 @@
+pyshakealert.bin package
+************************
+
+
+Submodules
+==========
+
+
+pyshakealert.bin.fdsnws2chanfile module
+=======================================
+
+
+Command-line utilities
+----------------------
+
+
+pyshakealert.bin.fdsnws2tank module
+===================================
+
+
+Command-line utilities
+----------------------
+
+
+pyshakealert.bin.file2shakealert module
+=======================================
+
+
+Command-line utilities
+----------------------
+
+
+pyshakealert.bin.play2shakealert module
+=======================================
+
+
+Command-line utilities
+----------------------
+
+
+pyshakealert.bin.shakealert2mail module
+=======================================
+
+
+Command-line utilities
+----------------------
+
+class pyshakealert.bin.shakealert2mail.GracefulKiller
+
+   Bases: "object"
+
+   Handler for safely terminating the infinite loop programe
+
+   exit_gracefully(*args)
+
+   kill_now = False
+
+
+Module contents
+===============

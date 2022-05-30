@@ -1,0 +1,76 @@
+pyshakealert
+************
+
+* pyshakealert package
+
+  * Subpackages
+
+    * pyshakealert.actions package
+
+      * Submodules
+
+      * pyshakealert.actions.mail module
+
+      * pyshakealert.actions.models module
+
+      * Module contents
+
+    * pyshakealert.bin package
+
+      * Submodules
+
+      * pyshakealert.bin.fdsnws2chanfile module
+
+      * pyshakealert.bin.fdsnws2tank module
+
+      * pyshakealert.bin.file2shakealert module
+
+      * pyshakealert.bin.play2shakealert module
+
+      * pyshakealert.bin.shakealert2mail module
+
+      * Module contents
+
+    * pyshakealert.channels package
+
+      * Submodules
+
+      * pyshakealert.channels.file module
+
+      * Module contents
+
+    * pyshakealert.maps package
+
+      * Submodules
+
+      * pyshakealert.maps.event module
+
+      * Module contents
+
+    * pyshakealert.message package
+
+      * Subpackages
+
+      * Submodules
+
+      * pyshakealert.message.validate module
+
+      * Module contents
+
+    * pyshakealert.tankplayer package
+
+      * Submodules
+
+      * pyshakealert.tankplayer.tankfile module
+
+      * Module contents
+
+  * Submodules
+
+  * pyshakealert.config module
+
+  * pyshakealert.exceptions module
+
+  * pyshakealert.player module
+
+  * Module contents

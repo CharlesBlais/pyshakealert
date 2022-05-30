@@ -1,0 +1,242 @@
+pyshakealert package
+********************
+
+
+Subpackages
+===========
+
+* pyshakealert.actions package
+
+  * Submodules
+
+  * pyshakealert.actions.mail module
+
+    * Mail client
+
+  * pyshakealert.actions.models module
+
+    * Models
+
+  * Module contents
+
+* pyshakealert.bin package
+
+  * Submodules
+
+  * pyshakealert.bin.fdsnws2chanfile module
+
+    * Command-line utilities
+
+  * pyshakealert.bin.fdsnws2tank module
+
+    * Command-line utilities
+
+  * pyshakealert.bin.file2shakealert module
+
+    * Command-line utilities
+
+  * pyshakealert.bin.play2shakealert module
+
+    * Command-line utilities
+
+  * pyshakealert.bin.shakealert2mail module
+
+    * Command-line utilities
+
+  * Module contents
+
+* pyshakealert.channels package
+
+  * Submodules
+
+  * pyshakealert.channels.file module
+
+    * Channel file library
+
+  * Module contents
+
+* pyshakealert.maps package
+
+  * Submodules
+
+  * pyshakealert.maps.event module
+
+    * Maps
+
+  * Module contents
+
+* pyshakealert.message package
+
+  * Subpackages
+
+    * pyshakealert.message.clients package
+
+      * Submodules
+
+      * pyshakealert.message.clients.mqtt module
+
+      * pyshakealert.message.clients.stomp module
+
+      * Module contents
+
+    * pyshakealert.message.event package
+
+      * Submodules
+
+      * pyshakealert.message.event.base module
+
+      * pyshakealert.message.event.contributors module
+
+      * pyshakealert.message.event.core_info module
+
+      * pyshakealert.message.event.event module
+
+      * pyshakealert.message.event.fault_info module
+
+      * pyshakealert.message.event.follow_up_info module
+
+      * pyshakealert.message.event.gm_info module
+
+      * pyshakealert.message.event.gmcontour module
+
+      * pyshakealert.message.event.gmmap module
+
+      * pyshakealert.message.event.gmpoint module
+
+      * Module contents
+
+  * Submodules
+
+  * pyshakealert.message.validate module
+
+    * XML Event Validator
+
+  * Module contents
+
+* pyshakealert.tankplayer package
+
+  * Submodules
+
+  * pyshakealert.tankplayer.tankfile module
+
+    * Tankfile generator
+
+  * Module contents
+
+
+Submodules
+==========
+
+
+pyshakealert.config module
+==========================
+
+class pyshakealert.config.AppSettings(_env_file: Optional[Union[Path, str]] = '<object object>', _env_file_encoding: Optional[str] = None, _secrets_dir: Optional[Union[Path, str]] = None, *, log_level: LogLevels = LogLevels.WARNING, log_format: str = '%(asctime)s.%(msecs)03d %(levelname)s %(module)s %(funcName)s: %(message)s', log_datefmt: str = '%Y-%m-%d %H:%M:%S', email_from: str = 'cnsnopr@seismo.nrcan.gc.ca', smtp_server: str = 'mailhost.seismo.nrcan.gc.ca', amq_username: str = None, amq_password: str = None, template_dir: str = '/nrn/home/NRN/chblais/.conda/envs/seiscomp3/lib/python3.6/site-packages/pyshakealert/files/templates', dm_schema: str = '/nrn/home/NRN/chblais/.conda/envs/seiscomp3/lib/python3.6/site-packages/pyshakealert/files/schemas/ShakeAlert_Message_v10_20191004.xsd', ms2tank: str = '/app/eewdata/ew/bin/ms2tank', ms2tank_timeout: int = 10, ms2tank_pad_before: int = 60, ms2tank_pad_after: int = 600, ms2tank_buffer_size: int = 1, amq_host: str = 'localhost', amq_mqtt_port: int = 1883, amq_stomp_port: int = 61613, message_expires: int = 600, message_content_type: str = 'application/xml', fdsnws: str = 'http://fdsn.seismo.nrcan.gc.ca', mmi_colors: list = ['#ffffff', '#ffffff', '#b4c3fb', '#82effd', '#6ffffa', '#7bfc6c', '#ffff13', '#f2b11e', '#fd680a', '#f90003', '#be0006'])
+
+   Bases: "BaseSettings"
+
+   class Config
+
+      Bases: "object"
+
+      env_file = '.env'
+
+      env_prefix = 'shakealert_'
+
+   amq_password: Optional[str]
+
+   amq_username: Optional[str]
+
+   configure_logging()
+
+      Configure logging for app
+
+   email_from: str
+
+   log_datefmt: str
+
+   log_format: str
+
+   log_level: LogLevels
+
+   smtp_server: str
+
+   property template_chanfile: Template
+
+   property template_mail: Template
+
+class pyshakealert.config.LogLevels(value)
+
+   Bases: "Enum"
+
+   An enumeration.
+
+   DEBUG: str = 'DEBUG'
+
+   ERROR: str = 'ERROR'
+
+   INFO: str = 'INFO'
+
+   WARNING: str = 'WARNING'
+
+pyshakealert.config.get_app_settings() -> AppSettings
+
+
+pyshakealert.exceptions module
+==============================
+
+exception pyshakealert.exceptions.EmptyEventException
+
+   Bases: "Exception"
+
+   Empty event exception
+
+exception pyshakealert.exceptions.TankException
+
+   Bases: "Exception"
+
+   Tankfile exception
+
+
+pyshakealert.player module
+==========================
+
+class pyshakealert.player.CSVPlayer(csvfile: str, dry_run: bool = False)
+
+   Bases: "object"
+
+   Parse the content of the CSV file to determine the timeline of
+   information to play, its topic, and the file content.
+
+   We also validate that the file exists.
+
+   play(client: Client)
+
+      Play the content of the CSV file to the client that has already
+      initiated a connection.
+
+      Note:
+
+        the following assumes the client is already connected
+
+      Parameters:
+         **client** ("pyshakealert.message.client.Client") -- mesage
+         broker client
+
+class pyshakealert.player.PlayItem(*, send_at: float, delay: float, topic: str, message_type: str, filename: str)
+
+   Bases: "BaseModel"
+
+   delay: float
+
+   filename: str
+
+   message_type: str
+
+   send_at: float
+
+   topic: str
+
+
+Module contents
+===============
