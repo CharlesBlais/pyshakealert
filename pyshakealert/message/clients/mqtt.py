@@ -94,7 +94,7 @@ class Client:
         def on_message_handler(client, userdata, message: MQTTMessage):
             logging.info(f'Received message on \
 {message.topic}:\n{message.payload}')
-            on_message(message.topic, message.payload)
+            on_message(message.topic, message.payload.decode('utf-8'))
         self.client.on_message = on_message_handler
 
         # Subscribing in on_connect() means that if we lose the connection
