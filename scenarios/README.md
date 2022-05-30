@@ -1,6 +1,6 @@
 # Testing Alerting with ActiveMQ Artemis
 
-As of May 2022, the ShakeAlert project is using Apache ActiveMQ v5 and are working towards using Apache ActiveMQ Artemis.  The following is testing instructions using docker (or podman) to start using ActiveMQ Artemis that will be used to distribute alerts to clients.  The following are key difference between the testing and the current production setup:
+As of May 2022, the ShakeAlert project is using Apache ActiveMQ v5 and are working towards using Apache ActiveMQ Artemis.  The following are testing instructions using docker (or podman) to start using ActiveMQ Artemis that will be used to distribute alerts to clients.  The following are key differences between the testing and the current production setups:
 
 * ActiveMQ broker connections use SSL.  We opt not to distribute this with SSL to simplify setup/instructions.
 * Artemis does not use "/topic/" topic prefix in STOMP
@@ -48,7 +48,7 @@ Important to note that this will use the default credentials username "artemis" 
 
 ## Running a ShakeAlert scenarios
 
-The library comes with a series of [scenarios](../scenarios) for you to test with.
+The library comes with a series of scenarios for you to test with found in this folder.
 
 To simplify the build and testing of the ShakeAlert project, we recommend you also use docker to run the exercise.
 
