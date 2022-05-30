@@ -6,31 +6,18 @@ import datetime
 
 import pytest
 
-from pyshakealert.message.client import Client
+from pyshakealert.message.clients.mqtt import Client
 from pyshakealert.config import get_app_settings
 
 
 @pytest.fixture
-def client_dm() -> Client:
+def client() -> Client:
     settings = get_app_settings()
     client = Client(
-        settings.amq_host,
-        port=61613,
+        host=settings.amq_host,
+        port=settings.amq_mqtt_port,
         username=settings.amq_username,
         password=settings.amq_password)
-    client.connect()
-    return client
-
-
-@pytest.fixture
-def client_sa() -> Client:
-    settings = get_app_settings()
-    client = Client(
-        settings.amq_host,
-        port=62613,
-        username=settings.amq_username,
-        password=settings.amq_password)
-    client.connect()
     return client
 
 
@@ -62,26 +49,16 @@ event_id="4557299" version="0"/>
 
 
 @pytest.mark.enable_socket
-def test_message_listen(client_dm):
+def test_message_listen_hb(client: Client):
     """
     Test connection to client on heartbeat topic
     """
-    # set signal handlers for stoping listener
-    client_dm.listen('eew.sys.ha.data')
+    client.subscribe('#')
     time.sleep(10)
+    client.disconnect()
 
 
-@pytest.mark.enable_socket
-def test_message_listen_hb(client_sa):
-    """
-    Test connection to client on heartbeat topic
-    """
-    # set signal handlers for stoping listener
-    client_sa.listen('eew.alg.finder.hb')
-    time.sleep(10)
-
-
-def test_message_send_hb(client_sa):
+def test_message_send_hb(client: Client):
     """
     Test sending HB
     """
@@ -93,17 +70,19 @@ timestamp="{timestamp}"/>
             datetime.datetime.now().strftime('%a %b %d %H:%M:%S %Y'))
         )
 
-    client_sa.send(
-        'eew.alg.finder.hb',
-        fake_hb.encode('utf-8'),
-        message_type='hb_finder.eew-bk-int1')
+    client.subscribe('#')
+    time.sleep(5)
+    client.publish('eew/alg/finder/hb', fake_hb)
+    time.sleep(5)
+    client.disconnect()
 
 
-def test_message_send(client_dm, fake_event):
+def test_message_send(client: Client, fake_event: str):
     """
     Test connection to client
     """
-    client_dm.send(
-        'eew.sys.dm.data',
-        fake_event.encode('utf-8'),
-        message_type='new')
+    client.subscribe('#')
+    time.sleep(5)
+    client.publish('eew/sys/dm/data', fake_event)
+    time.sleep(5)
+    client.disconnect()

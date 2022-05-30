@@ -2,14 +2,14 @@
 Command-line utilities
 ======================
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 from typing import Optional
 
 import click
 
 # User-contributed libraries
-from pyshakealert.message.client import Client
+from pyshakealert.message.clients.stomp import Client
 
 from pyshakealert.config import get_app_settings, LogLevels
 
@@ -27,7 +27,7 @@ settings = get_app_settings()
 @click.option(
     '-P', '--port',
     type=int,
-    default=settings.amq_port,
+    default=settings.amq_stomp_port,
     help='shakealert port'
 )
 @click.option(
@@ -44,6 +44,7 @@ settings = get_app_settings()
     required=True,
     help='play CSV file'
 )
+@click.option('--dry-run', is_flag=True)
 @click.option(
     '--log-level',
     type=click.Choice([v.value for v in LogLevels]),
@@ -55,13 +56,14 @@ def main(
     username: Optional[str],
     password: Optional[str],
     file: str,
+    dry_run: bool,
     log_level: Optional[str],
 ):
     """
-    Play a CSV file with ShakeAlert information
+    Play a CSV file with ShakeAlert information (uses STOMP)
     """
     settings.amq_host = host
-    settings.amq_port = port
+    settings.amq_stomp_port = port
     if username is not None:
         settings.amq_username = username
     if password is not None:
@@ -70,15 +72,18 @@ def main(
         settings.log_level = LogLevels[log_level]
     settings.configure_logging()
 
+    # for STOMP user-creds are required
+    if settings.amq_username is None or settings.amq_password is None:
+        raise ValueError('username and password are required')
+
     # setup the player
-    player = CSVPlayer(file)
+    player = CSVPlayer(file, dry_run=dry_run)
 
     # set client
     client = Client(
         settings.amq_host,
         username=settings.amq_username,
         password=settings.amq_password)
-    client.connect()
 
     # play the event on the client
     player.play(client)

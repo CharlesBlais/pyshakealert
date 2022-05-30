@@ -1,5 +1,5 @@
 '''
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 '''
 
 
@@ -9,11 +9,3 @@ class TankException(Exception):
 
 class EmptyEventException(Exception):
     """Empty event exception"""
-
-
-class ConnectFailedException(Exception):
-    """Connection failed"""
-
-
-class MissingCredentialsException(Exception):
-    """Missing credentials"""

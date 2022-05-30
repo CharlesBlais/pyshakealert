@@ -6,21 +6,25 @@ ActiveMQ client that abstract the behind-the-scene message passing
 protocol.  We try, as much as we can, to abstract the use of STOMP
 protocol so that future message broker upgrades wont' be impacted.
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 import datetime
 import logging
 from typing import List, Union, Optional, Callable, Tuple
 
+import socket
+
 # Third-party library
 import stomp
-
-from pyshakealert.exceptions import \
-    ConnectFailedException, MissingCredentialsException
 
 from pyshakealert.config import get_app_settings
 
 settings = get_app_settings()
+
+
+def default_on_message(topic: str, payload: str):
+    logging.info(f'Received message: {payload}')
+    logging.info(f'  Topic: {topic}')
 
 
 class Client:
@@ -33,7 +37,7 @@ class Client:
         port: Union[int, List[int]] = 61613,
         username: str = '',
         password: str = '',
-        keepalive: bool = False,
+        keepalive: bool = True,
         heartbeats: Tuple[int, int] = (0, 0),
     ) -> None:
         """
@@ -89,49 +93,40 @@ class Client:
         # Establish connection and set defaults
         self.username = username
         self.password = password
-        self.topic: Optional[str] = None
-        self.subscription_id: Optional[str] = None
+
+        # state for disconnect
+        self.do_disconnect = False
 
         logging.info(f'Initiate connection to {host_and_port}')
-        self.conn = stomp.Connection(
+        self.conn = stomp.StompConnection12(
             host_and_port,
             auto_content_length=False,
             keepalive=keepalive,
             heartbeats=heartbeats)
 
-    def connect(self) -> None:
+    def _connect(self) -> None:
         """
         Establish connection
 
         .. note::
             For stomp, username and password are also required.  They are
             keywords since certain protocols may not require credentials.
-
-        :raise MissingCredentialsException: failed to provide username
-            and password
-        :raise ConnectFailedException: failed to connect
         """
-        if self.username == '' or self.password == '':
-            raise MissingCredentialsException('username and password \
-must be set for stomp')
-
-        try:
-            logging.info(f"Connection to broker with user {self.username}")
-            self.conn.connect(self.username, self.password, wait=True)
-        except stomp.exception.ConnectFailedException as err:
-            raise ConnectFailedException(err)
+        logging.info(f"Connection to broker with user {self.username}")
+        self.conn.connect(self.username, self.password, wait=True)
 
     def disconnect(self) -> None:
         """
         Disconnect from the connection
         """
+        self.do_disconnect = True
         self.conn.disconnect()
 
-    def listen(
+    def subscribe(
         self,
         topic: str,
         subscription_id: Optional[str] = None,
-        listener: Optional[Callable] = None
+        on_message: Callable[[str, str], None] = default_on_message,
     ) -> None:
         """
         Subcribe to the topic sent and listen for messages
@@ -140,7 +135,7 @@ must be set for stomp')
         the content of the message to stdout.  The listener must follow
         the same template.
 
-        If the subscription_id is not set, we use the username as the default.
+        If the subscription_id is not set, we use the host as the default.
 
         ..  note::
             This routine is non-blocking.  Although we exit the routine, the
@@ -153,44 +148,39 @@ must be set for stomp')
         :raise ConnectFailedException: connection not initiated
         """
         if not self.conn.is_connected():
-            raise ConnectFailedException('Must be connected to ActiveMQ to \
-listen, use connect')
+            self._connect()
 
-        # set the subcription id if not set
         if subscription_id is None:
-            logging.debug(f'subcription not defined, using \
-username {self.username}')
-            subscription_id = self.username
+            subscription_id = socket.gethostname()
 
-        if listener is not None:
-            logging.info(f'Adding custom message listener {listener}')
-            self.conn.set_listener('', listener)
+        class Listener(stomp.ConnectionListener):
+            def __init__(self, client: 'Client'):
+                self.client = client
 
-        # save information
-        self.topic = topic
-        self.subscription_id = subscription_id
+            def on_message(self, frame):
+                topic = frame.headers['destination']
+                logging.info(f'received {topic}:\n{frame.body}')
+                on_message(topic, frame.body)
 
-        logging.info(f'Subscribing to topic {self.topic}')
-        self.conn.subscribe(self.topic, self.subscription_id)
+            def on_disconnected(self):
+                if self.client.do_disconnect:
+                    logging.info('disconnected')
+                    return
+                logging.warning('Loss connection, attempting reconnect')
+                self.client._connect()
+                self.client.conn.subscribe(topic, subscription_id)
 
-    def reconnect(self):
-        '''
-        Use saved information to re-establish our connection
-        '''
-        if self.conn.is_connected():
-            logging.info('Client is already connected')
-            return None
+        self.conn.set_listener('', Listener(self))
 
-        # restart connection
-        self.connect()
-        logging.info(f'Re-subscribing to topic {self.topic}')
-        self.conn.subscribe(self.topic, self.subscription_id)
+        logging.info(
+            f'Subscribing to topic {topic} with id {subscription_id}')
+        self.conn.subscribe(topic, subscription_id, ack='auto')
 
-    def send(
+    def publish(
         self,
         topic: str,
         body: Union[str, bytes],
-        content_type: Optional[str] = None,
+        content_type: str = settings.message_content_type,
         expires: float = settings.message_expires,
         message_type: Optional[str] = None,
         message_id: int = 1,
@@ -212,8 +202,7 @@ username {self.username}')
         :raise ConnectFailedException: connection not initiated
         """
         if not self.conn.is_connected():
-            raise ConnectFailedException('Must be connected to ActiveMQ to \
-listen, use connect')
+            self._connect()
 
         # Create header information
         headers = {

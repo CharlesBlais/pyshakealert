@@ -1,5 +1,8 @@
 """
-..  codeauthor:: Charles Blais
+XML Event Validator
+===================
+
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 import logging
 import io

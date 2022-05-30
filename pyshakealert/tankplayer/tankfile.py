@@ -1,5 +1,8 @@
 """
-..  codeauthor:: Charles Blais
+Tankfile generator
+==================
+
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 import os
 import subprocess

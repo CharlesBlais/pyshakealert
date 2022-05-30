@@ -1,0 +1,7 @@
+# Ignore files to copy over into container
+.mypy_cache
+.pytest_cache
+.env
+.coverage
+coverage.xml
+emaillist.txt

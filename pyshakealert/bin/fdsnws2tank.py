@@ -2,7 +2,7 @@
 Command-line utilities
 ======================
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 import datetime
 from typing import Optional

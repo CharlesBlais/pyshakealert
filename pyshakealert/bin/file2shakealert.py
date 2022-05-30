@@ -2,17 +2,19 @@
 Command-line utilities
 ======================
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 from typing import Optional
 
 import click
 
 import sys
+
 import logging
 
 # User-contributed libraries
-from pyshakealert.message.client import Client
+from pyshakealert.message.clients.stomp import Client
+
 from pyshakealert.config import get_app_settings, LogLevels
 
 settings = get_app_settings()
@@ -27,7 +29,7 @@ settings = get_app_settings()
 @click.option(
     '-P', '--port',
     type=int,
-    default=settings.amq_port,
+    default=settings.amq_stomp_port,
     help='shakealert port'
 )
 @click.option(
@@ -76,19 +78,22 @@ def main(
     log_level: Optional[str],
 ):
     """
-    ShakeAlert message sender (simplified stomp utility)
+    ShakeAlert message sender (uses STOMP)
 
-    Send messages on any topic on the ShakeAlert system
-    and output the result to stdout
+    Send messages on any topic on the ShakeAlert system.
     """
     settings.amq_host = host
-    settings.amq_port = port
+    settings.amq_stomp_port = port
     settings.message_expires = expires
 
     if username is not None:
         settings.amq_username = username
     if password is not None:
         settings.amq_password = password
+
+    # for STOMP user-creds are required
+    if settings.amq_username is None or settings.amq_password is None:
+        raise ValueError('username and password are required')
 
     if log_level is not None:
         settings.log_level = LogLevels[log_level]
@@ -105,13 +110,12 @@ def main(
     # set signal handlers for stoping listener
     client = Client(
         settings.amq_host,
-        port=settings.amq_port,
+        port=settings.amq_stomp_port,
         username=settings.amq_username,
         password=settings.amq_password)
-    client.connect()
-    client.send(
+    client.publish(
         topic=topic,
         body=body,
-        message_type=message_type
+        message_type=message_type,
     )
     client.disconnect()

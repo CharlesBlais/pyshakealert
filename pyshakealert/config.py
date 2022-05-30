@@ -1,8 +1,9 @@
 '''
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 '''
 import logging
 from enum import Enum
+from typing import Optional
 
 from functools import lru_cache
 from pydantic import BaseSettings
@@ -43,11 +44,19 @@ class AppSettings(BaseSettings):
 
     # activemq
     amq_host = 'localhost'
-    amq_username = ''
-    amq_password = ''
-    amq_port = 61613
+    amq_username: Optional[str] = None
+    amq_password: Optional[str] = None
+    amq_mqtt_port = 1883
+    # amq_wp = 1884
+    # amq_sa = 1893
+    # amq_dm = 8883 (ssl)
+    amq_stomp_port = 61613
+    # amq_wp = 62613 (62612 - SSL)
+    # amq_sa = 63613 (63612 - SSL)
+    # amq_dm = 61613 (61612 - SSL)
 
     message_expires = 600   # seconds
+    message_content_type = 'application/xml'
 
     # fdsnws
     fdsnws = 'http://fdsn.seismo.nrcan.gc.ca'

@@ -23,7 +23,7 @@ response must be:
 
 It is currently unknown if the channel description is a mandatory field.
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 import datetime
 from typing import Union, Optional, TextIO

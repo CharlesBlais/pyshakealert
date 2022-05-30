@@ -4,7 +4,7 @@ Maps
 
 Maps for represent event information
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 '''
 import logging
 

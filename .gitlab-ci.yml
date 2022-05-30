@@ -2,6 +2,7 @@ stages:
   - build
   - static code
   - test
+  - deploy
 
 image: continuumio/miniconda3
 
@@ -63,3 +64,16 @@ pytest:
       cobertura: coverage.xml
     paths:
       - coverage.xml
+
+pages:
+  stage: deploy
+  script:
+    - *build
+    - python -m pip install sphinx
+    - sphinx-apidoc -o docs/source/ pyshakealert/
+    - sphinx-build -b html docs/ public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

@@ -2,7 +2,7 @@
 Command-line utilities
 ======================
 
-..  codeauthor:: Charles Blais
+..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
 from typing import Optional, List
 
@@ -12,14 +12,10 @@ import signal
 
 import logging
 
-import stomp
-
 import time
 
-import traceback
-
 # User-contributed libraries
-from pyshakealert.message.client import Client
+from pyshakealert.message.clients.mqtt import Client
 
 import pyshakealert.message.event as event
 
@@ -45,32 +41,6 @@ class GracefulKiller:
         self.kill_now = True
 
 
-class Listener(stomp.ConnectionListener):
-    '''
-    ActiveMQ listener to convert and send to NPAS
-    '''
-    def __init__(self, mailer: Mailer, client: Client):
-        self.mailer = mailer
-        self.client = client
-        self.running = True
-
-    def on_error(self, frame):
-        logging.error(f'received an error: {frame}')
-        self.running = False
-        return super().on_error()
-
-    def on_message(self, frame):
-        logging.info(f'received a message: {frame.body}')
-        try:
-            self.mailer.send(event.from_string(frame.body))
-        except Exception:
-            logging.error(traceback.format_exc())
-
-    def on_disconnected(self):
-        logging.warning('Loss connection')
-        self.client.reconnect()
-
-
 @click.command()
 @click.option(
     '-t', '--topic',
@@ -85,7 +55,7 @@ class Listener(stomp.ConnectionListener):
 @click.option(
     '-P', '--port',
     type=int,
-    default=settings.amq_port,
+    default=settings.amq_mqtt_port,
     help='shakealert port'
 )
 @click.option(
@@ -128,7 +98,7 @@ def main(
     and output the result to stdout
     """
     settings.amq_host = host
-    settings.amq_port = port
+    settings.amq_mqtt_port = port
     if username is not None:
         settings.amq_username = username
     if password is not None:
@@ -148,25 +118,22 @@ def main(
         raise IOError('No email recipients found')
 
     logging.info(f'Registering emails: {emails}')
+    mailer = Mailer(recipients=emails)
+
+    def on_message(topic, payload):
+        mailer.send(event.from_string(payload))
 
     client = Client(
         settings.amq_host,
-        port=settings.amq_port,
+        port=settings.amq_mqtt_port,
         username=settings.amq_username,
         password=settings.amq_password,
-        keepalive=True,
-        heartbeats=(4000, 4000))
-    # Create the mail client listener
-    listener = Listener(
-        mailer=Mailer(recipients=emails),
-        client=client,
-    )
-    client.connect()
-    client.listen(topic, listener=listener)
+        reconnect=10)
+    client.subscribe(topic, on_message=on_message)
 
     # set signal handlers for stoping listener
     killer = GracefulKiller()
-    while not killer.kill_now and listener.running:
+    while not killer.kill_now:
         time.sleep(1)
 
     # terminate the connection cleanly for the ActiceMQ broker
