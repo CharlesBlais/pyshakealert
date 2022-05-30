@@ -70,9 +70,8 @@ pages:
   script:
     - *build
     - python -m pip install sphinx
-    - cd docs/
-    - sphinx-apidoc -o source/ ../pyshakealert/
-    - sphinx-build -b html . ../public
+    - sphinx-apidoc -o docs/source/ pyshakealert/
+    - sphinx-build -b html docs/source/ public
   artifacts:
     paths:
       - public

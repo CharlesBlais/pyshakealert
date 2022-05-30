@@ -1,5 +1,5 @@
 .. pyshakealert documentation master file, created by
-   sphinx-quickstart on Sun May 29 22:26:42 2022.
+   sphinx-quickstart on Mon May 30 16:54:52 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
