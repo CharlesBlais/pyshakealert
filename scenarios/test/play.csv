@@ -1,4 +1,4 @@
-send_at,delay,topic,message_type,filename
-0,1,eew.sys.dm.data,new,2014_Haywired_M7.0.xml
-0,1,eew.sys.gm-contour.data,new,2014_Haywired_M7.0_contour.xml
-0,1,eew.sys.gm-map.data,new,2014_Haywired_M7.0_map.xml
+send_at,topic,filename
+0,eew.sys.dm.data,2014_Haywired_M7.0.xml
+0,eew.sys.gm-contour.data,2014_Haywired_M7.0_contour.xml
+0,eew.sys.gm-map.data,2014_Haywired_M7.0_map.xml

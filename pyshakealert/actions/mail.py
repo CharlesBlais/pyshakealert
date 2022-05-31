@@ -55,7 +55,8 @@ class Mailer(Client):
         :type event: :class:`pyshakealert.message.event.event.Event`
         :param event: event information
         '''
-        return f'ShakeAlert Event at {event.timestamp} from {event.instance}'
+        return f'ShakeAlert: {event.core_info.mag.value} {event.core_info.mag.units} \
+at {event.timestamp} from {event.instance}'
 
     def send(
         self,

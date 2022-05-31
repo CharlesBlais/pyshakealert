@@ -15,6 +15,8 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
+from dateutil.parser import parse
+
 from pyshakealert.message.clients.stomp import Client
 
 from pyshakealert.message.event import from_file, to_string
@@ -22,9 +24,7 @@ from pyshakealert.message.event import from_file, to_string
 
 class PlayItem(BaseModel):
     send_at: float
-    delay: float
     topic: str
-    message_type: str
     filename: str
 
 
@@ -91,11 +91,12 @@ class CSVPlayer:
             event = from_file(item.filename)
 
             # alter message format
-            event.timestamp = datetime.datetime.utcnow().isoformat()
-            event.core_info.orig_time.value = (
-                datetime.datetime.utcnow() -
-                datetime.timedelta(seconds=item.delay)
-            ).isoformat()
+            utcnow = datetime.datetime.utcnow()
+            utcdelta = parse(event.timestamp) - utcnow
+            event.timestamp = utcnow.isoformat()
+            event.core_info.orig_time.value = (parse(
+                event.core_info.orig_time.value
+            ) + utcdelta).isoformat()
             logging.debug(f'  timestamp: {event.timestamp}')
             logging.debug(f'  origin: {event.core_info.orig_time.value}')
 
@@ -104,7 +105,7 @@ class CSVPlayer:
                 client.publish(
                     topic=item.topic,
                     body=to_string(event),
-                    message_type=item.message_type,
+                    message_type=event.message_type,
                 )
             else:
                 logging.info('Quiet mode enabled')
