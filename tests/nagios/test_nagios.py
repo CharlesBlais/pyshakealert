@@ -74,6 +74,11 @@ def test_nagios_conv_subcomponent_nok(system_status: SystemStatus):
     assert ng.status == models.NagiosOutputCode.critical
 
 
+def test_nagios_conv_component_epic(system_status: SystemStatus):
+    ng = to_nagios(system_status, namepath=['epic.wp.cn'])
+    print(ng)
+
+
 def test_nagios_nrdp(system_status: SystemStatus):
     nrdp = to_nrdp('eew-cn-int1', system_status)
     print(nrdp)

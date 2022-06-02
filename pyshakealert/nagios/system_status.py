@@ -43,18 +43,19 @@ def system_status_to_nagios(
     '''
     Convert system status to Nagios
     '''
-    value = system_status.count - system_status.missing
+    value = system_status.count
+    total = system_status.count + system_status.missing
     perf = NagiosPerformance(
         label='count',
         value=value,
         critical=system_status.required,
         minimum=0,
-        maximum=system_status.count,
+        maximum=total,
     )
 
     return NagiosResult(
         summary=f'{system_status.status} - {system_status.alg_name}, \
-{value}/{system_status.count}, required: {system_status.required}, \
+{value}/{total}, required: {system_status.required}, \
 unexpected: {system_status.unexpected}, {system_status.timestamp}',
         status=_status_to_code(system_status.status),
         performances=[perf],
@@ -68,18 +69,19 @@ def component_to_nagios(
     '''
     Convert component to Nagios
     '''
-    value = component.count - component.missing
+    value = component.count
+    total = component.count + component.missing
     perf = NagiosPerformance(
         label='count',
         value=value,
         critical=component.required,
         minimum=0,
-        maximum=component.count,
+        maximum=total,
     )
 
     return NagiosResult(
         summary=f'{component.status} - {component.name}, \
-{value}/{component.count}, \
+{value}/{total}, \
 required: {component.required}',
         status=_status_to_code(component.status),
         performances=[perf],
