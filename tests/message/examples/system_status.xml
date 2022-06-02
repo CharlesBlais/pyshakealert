@@ -1,0 +1,78 @@
+<system_status alg_name="ha" alg_version="2.2.1_2020-07-28" count="15"
+    instance="ha_sa.eew-cn-int1" missing="4" required="15"
+    status="WARNING" timestamp="2022-06-01T12:23:10UTC" unexpected="2">
+    <component count="1" missing="0" name="sa" required="1" status="ON">
+        <subcomponent name="sa.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+    </component>
+    <component count="1" missing="0" name="eqinfo2gm-contour"
+        required="1" status="ON">
+        <subcomponent name="eqinfo2gm-contour.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+    </component>
+    <component count="1" missing="0" name="eqinfo2gm-map" required="1" status="ON">
+        <subcomponent name="eqinfo2gm-map.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+    </component>
+    <component count="9" missing="1" name="epic" required="1" status="ON">
+        <subcomponent name="epic.eew-bk-int1" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+        <subcomponent name="epic.eew-bk-int2" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="epic.eew-ci-int1" status="ON" timestamp="2022-06-01T12:23:05UTC"/>
+        <subcomponent name="epic.eew-ci-int2" status="ON" timestamp="2022-06-01T12:23:05UTC"/>
+        <subcomponent name="epic.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:06UTC"/>
+        <subcomponent name="epic.eew-cn-int2" status="OFFLINE" timestamp="2022-05-31T17:47:47UTC"/>
+        <subcomponent name="epic.eew-nc-int1" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+        <subcomponent name="epic.eew-nc-int2" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="epic.eew-uw-int1" status="ON" timestamp="2022-06-01T12:23:06UTC"/>
+        <subcomponent name="epic.eew-uw-int2" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+    </component>
+    <component count="2" missing="0" name="epic.wp.bk" required="1" status="ON">
+        <subcomponent name="epic.wp.eew-bk-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="epic.wp.eew-bk-int2" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+    </component>
+    <component count="2" missing="0" name="epic.wp.ci" required="1" status="ON">
+        <subcomponent name="epic.wp.eew-ci-int1" status="ON" timestamp="2022-06-01T12:23:05UTC"/>
+        <subcomponent name="epic.wp.eew-ci-int2" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+    </component>
+    <component count="1" missing="1" name="epic.wp.cn" required="1" status="ON">
+        <subcomponent name="epic.wp.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="epic.wp.eew-cn-int2" status="OFFLINE" timestamp="2022-05-30T14:50:58UTC"/>
+    </component>
+    <component count="2" missing="0" name="epic.wp.nc" required="1" status="ON">
+        <subcomponent name="epic.wp.eew-nc-int1" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+        <subcomponent name="epic.wp.eew-nc-int2" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+    </component>
+    <component count="2" missing="0" name="epic.wp.uw" required="1" status="ON">
+        <subcomponent name="epic.wp.eew-uw-int1" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="epic.wp.eew-uw-int2" status="ON" timestamp="2022-06-01T12:23:06UTC"/>
+    </component>
+    <component count="9" missing="1" name="finder" required="1" status="ON">
+        <subcomponent name="finder.eew-bk-int1" status="ON" timestamp="2022-06-01T12:23:05UTC"/>
+        <subcomponent name="finder.eew-bk-int2" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+        <subcomponent name="finder.eew-ci-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="finder.eew-ci-int2" status="ON" timestamp="2022-06-01T12:23:05UTC"/>
+        <subcomponent name="finder.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:06UTC"/>
+        <subcomponent name="finder.eew-cn-int2" status="OFFLINE" timestamp="2022-05-31T17:47:45UTC"/>
+        <subcomponent name="finder.eew-nc-int1" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="finder.eew-nc-int2" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="finder.eew-uw-int1" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="finder.eew-uw-int2" status="ON" timestamp="2022-06-01T12:23:06UTC"/>
+    </component>
+    <component count="2" missing="0" name="finder.wp.bk" required="1" status="ON">
+        <subcomponent name="finder.wp.eew-bk-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="finder.wp.eew-bk-int2" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+    </component>
+    <component count="2" missing="0" name="finder.wp.ci" required="1" status="ON">
+        <subcomponent name="finder.wp.eew-ci-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="finder.wp.eew-ci-int2" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+    </component>
+    <component count="1" missing="1" name="finder.wp.cn" required="1" status="ON">
+        <subcomponent name="finder.wp.eew-cn-int1" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+        <subcomponent name="finder.wp.eew-cn-int2" status="OFFLINE" timestamp="2022-05-30T14:51:18UTC"/>
+    </component>
+    <component count="2" missing="0" name="finder.wp.nc" required="1" status="ON">
+        <subcomponent name="finder.wp.eew-nc-int1" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+        <subcomponent name="finder.wp.eew-nc-int2" status="ON" timestamp="2022-06-01T12:23:08UTC"/>
+    </component>
+    <component count="2" missing="0" name="finder.wp.uw" required="1" status="ON">
+        <subcomponent name="finder.wp.eew-uw-int1" status="ON" timestamp="2022-06-01T12:23:07UTC"/>
+        <subcomponent name="finder.wp.eew-uw-int2" status="ON" timestamp="2022-06-01T12:23:09UTC"/>
+    </component>
+</system_status>

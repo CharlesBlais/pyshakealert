@@ -152,6 +152,7 @@ setup(
         'click',
         'cartopy',
         'matplotlib',
+        'requests',
     ],  # Optional
 
     # List addidetect (e.g. development
@@ -206,6 +207,8 @@ pyshakealert.bin.file2shakealert:main',
 pyshakealert.bin.fdsnws2tank:main',
             'shake_play2shakealert=\
 pyshakealert.bin.play2shakealert:main',
+            'shake_heartbeat2nrdp=\
+pyshakealert.bin.heartbeat2nrdp:main',
             'shakealert2mail=\
 pyshakealert.bin.shakealert2mail:main',
         ],

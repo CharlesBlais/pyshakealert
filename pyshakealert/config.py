@@ -46,6 +46,8 @@ class AppSettings(BaseSettings):
     amq_host = 'localhost'
     amq_username: Optional[str] = None
     amq_password: Optional[str] = None
+    amq_ca_certs: Optional[str] = None
+    amq_keyfile: Optional[str] = None
     amq_mqtt_port = 1883
     # amq_wp = 1884
     # amq_sa = 1893
@@ -75,6 +77,12 @@ class AppSettings(BaseSettings):
         '#f90003',  # 9
         '#be0006',  # 10
     ]
+
+    # Nagios plugins
+    nagios_url: Optional[str] = None
+    nagios_token: Optional[str] = None
+    nagios_timestamp_warning = '0:60'     # seconds
+    nagios_timestamp_critical = '0:120'   # seconds
 
     class Config:
         env_file = '.env'

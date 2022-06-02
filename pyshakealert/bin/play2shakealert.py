@@ -32,6 +32,7 @@ settings = get_app_settings()
 )
 @click.option(
     '-u', '--username',
+    default=settings.amq_username,
     help='shakealert AMQ username'
 )
 @click.option(
@@ -53,7 +54,7 @@ settings = get_app_settings()
 def main(
     host: str,
     port: int,
-    username: Optional[str],
+    username: str,
     password: Optional[str],
     file: str,
     dry_run: bool,
@@ -64,8 +65,7 @@ def main(
     """
     settings.amq_host = host
     settings.amq_stomp_port = port
-    if username is not None:
-        settings.amq_username = username
+    settings.amq_username = username
     if password is not None:
         settings.amq_password = password
     if log_level is not None:
@@ -83,7 +83,9 @@ def main(
     client = Client(
         settings.amq_host,
         username=settings.amq_username,
-        password=settings.amq_password)
+        password=settings.amq_password,
+        ca_certs=settings.amq_ca_certs,
+        keyfile=settings.amq_keyfile)
 
     # play the event on the client
     player.play(client)

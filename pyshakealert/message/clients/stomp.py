@@ -37,6 +37,8 @@ class Client:
         port: Union[int, List[int]] = 61613,
         username: str = '',
         password: str = '',
+        ca_certs: Optional[str] = None,
+        keyfile: Optional[str] = None,
         keepalive: bool = True,
         heartbeats: Tuple[int, int] = (0, 0),
     ) -> None:
@@ -103,6 +105,8 @@ class Client:
             auto_content_length=False,
             keepalive=keepalive,
             heartbeats=heartbeats)
+        if ca_certs is not None:
+            self.conn.set_ssl(key_file=keyfile, ca_certs=ca_certs)
 
     def _connect(self) -> None:
         """

@@ -39,6 +39,7 @@ settings = get_app_settings()
 )
 @click.option(
     '-u', '--username',
+    default=settings.amq_username,
     help='shakealert AMQ username'
 )
 @click.option(
@@ -53,7 +54,7 @@ settings = get_app_settings()
 @click.option(
     '-e', '--expires',
     type=int,
-    default=60,
+    default=settings.message_expires,
     help='message expiry time in seconds from now'
 )
 @click.option(
@@ -85,9 +86,7 @@ def main(
     settings.amq_host = host
     settings.amq_stomp_port = port
     settings.message_expires = expires
-
-    if username is not None:
-        settings.amq_username = username
+    settings.amq_username = username
     if password is not None:
         settings.amq_password = password
 
@@ -112,7 +111,9 @@ def main(
         settings.amq_host,
         port=settings.amq_stomp_port,
         username=settings.amq_username,
-        password=settings.amq_password)
+        password=settings.amq_password,
+        ca_certs=settings.amq_ca_certs,
+        keyfile=settings.amq_keyfile)
     client.publish(
         topic=topic,
         body=body,

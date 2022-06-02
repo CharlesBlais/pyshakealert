@@ -14,6 +14,7 @@ from typing import Union, Optional, Callable
 
 # Third-party library
 import paho.mqtt.client as mqtt
+
 from paho.mqtt.client import MQTTMessage
 
 from pyshakealert.config import get_app_settings
@@ -36,6 +37,8 @@ class Client:
         port: int = 1883,
         username: Optional[str] = None,
         password: Optional[str] = None,
+        ca_certs: Optional[str] = None,
+        keyfile: Optional[str] = None,
         reconnect: int = 0,
         keepalive: int = 60,
     ) -> None:
@@ -56,6 +59,10 @@ class Client:
         logging.info('Initiate MQTT client')
         self.client = mqtt.Client()
         self.client.enable_logger()
+        if ca_certs is not None:
+            self.client.tls_set(ca_certs=ca_certs, keyfile=keyfile)
+            # TODO: our host is not in their certifi
+            self.client.tls_insecure_set(True)
         if username is not None:
             logging.info(f'  credentials: {username}')
             self.client.username_pw_set(username, password=password)

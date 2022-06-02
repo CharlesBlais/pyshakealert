@@ -4,7 +4,7 @@ Command-line utilities
 
 ..  codeauthor:: Charles Blais <charles.blais@nrcan-rncan.gc.ca>
 """
-from typing import Optional, List
+from typing import Optional
 
 import click
 
@@ -17,11 +17,14 @@ import time
 # User-contributed libraries
 from pyshakealert.message.clients.mqtt import Client
 
-import pyshakealert.message.event as event
+import pyshakealert.message.system_status as system_status
 
-from pyshakealert.actions.mail import Mailer
+from pyshakealert.nagios import nrdp
 
 from pyshakealert.config import get_app_settings, LogLevels
+
+from pyshakealert.nagios.models import NagiosRange
+
 
 settings = get_app_settings()
 
@@ -45,7 +48,7 @@ class GracefulKiller:
 @click.option(
     '-t', '--topic',
     required=True,
-    help='shakealert AMQ topic (ex: eew.sys.dm.data)'
+    help='shakealert HA AMQ topic (ex: eew.sys.ha.data)'
 )
 @click.option(
     '-H', '--host',
@@ -68,14 +71,24 @@ class GracefulKiller:
     help='shakealert AMQ password'
 )
 @click.option(
-    '-r', '--recipients',
-    multiple=True,
-    help='recipients for sending email'
+    '--nagios-url',
+    default=settings.nagios_url,
+    help='Nagios XI host'
 )
 @click.option(
-    '-R', '--recipients-from-file',
-    type=click.Path(file_okay=True, dir_okay=False, exists=True),
-    help='recipients for sending email from file'
+    '--nagios-token',
+    default=settings.nagios_token,
+    help='Nagios XI tocken'
+)
+@click.option(
+    '-w', '--warning',
+    default=settings.nagios_timestamp_warning,
+    help='Warning threshold in seconds for old timestamp'
+)
+@click.option(
+    '-c', '--critical',
+    default=settings.nagios_timestamp_critical,
+    help='Critical threshold in seconds for old timestamp'
 )
 @click.option(
     '--log-level',
@@ -88,8 +101,10 @@ def main(
     port: int,
     username: str,
     password: Optional[str],
-    recipients: Optional[List[str]],
-    recipients_from_file: Optional[str],
+    nagios_url: Optional[str],
+    nagios_token: Optional[str],
+    warning: str,
+    critical: str,
     log_level: Optional[str],
 ):
     """
@@ -101,27 +116,30 @@ def main(
     settings.amq_host = host
     settings.amq_mqtt_port = port
     settings.amq_username = username
+    settings.nagios_url = nagios_url
+    settings.nagios_token = nagios_token
+    settings.nagios_timestamp_warning = warning
+    settings.nagios_timestamp_critical = critical
     if password is not None:
         settings.amq_password = password
     if log_level is not None:
         settings.log_level = LogLevels[log_level]
     settings.configure_logging()
 
-    emails: List[str] = []
-    if recipients_from_file is not None:
-        emails = open(recipients_from_file).readlines()
-        emails = [email.strip() for email in emails]
-        emails = list(filter(len, emails))
-    if recipients is not None:
-        emails += recipients
-    if len(emails) == 0:
-        raise IOError('No email recipients found')
-
-    logging.info(f'Registering emails: {emails}')
-    mailer = Mailer(recipients=emails)
+    if settings.nagios_token is None or settings.nagios_token is None:
+        raise ValueError('Nagios URL and token must be defined')
 
     def on_message(topic, payload):
-        mailer.send(event.from_string(payload))
+        nrdp.submit(
+            nrdp=nrdp.to_nrdp(
+                hostname=settings.amq_host,
+                system_status=system_status.from_string(payload),
+                warning=NagiosRange(settings.nagios_timestamp_warning),
+                critical=NagiosRange(settings.nagios_timestamp_critical),
+            ),
+            nagios_url=settings.nagios_url,
+            nagios_token=settings.nagios_token,
+        )
 
     client = Client(
         settings.amq_host,
