@@ -92,11 +92,11 @@ class CSVPlayer:
 
             # alter message format
             utcnow = datetime.datetime.utcnow()
-            utcdelta = parse(event.timestamp) - utcnow
+            utcdelta = parse(event.timestamp).replace(tzinfo=None) - utcnow
             event.timestamp = utcnow.isoformat()
             event.core_info.orig_time.value = (parse(
                 event.core_info.orig_time.value
-            ) + utcdelta).isoformat()
+            ).replace(tzinfo=None) + utcdelta).isoformat()
             logging.debug(f'  timestamp: {event.timestamp}')
             logging.debug(f'  origin: {event.core_info.orig_time.value}')
 
